@@ -181,7 +181,8 @@ public:
     Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii, char *numarTelefonic, int nrCartiImprumutate, int *idCartiImprumutate);
     Utilizator(char numeUtilizator[20], char prenumeUtilizator[20]);
     Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii);
-    ~Utilizator();
+    Utilizator(const Utilizator &obj); //copy-constructor
+    ~Utilizator(); //destructor
 //getteri
     const int getIdUtilizator() {return this->idUtilizator;}
     char *getNumeUtilizator() {return this->numeUtilizator;}
@@ -261,6 +262,22 @@ Utilizator::Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char
     this->idCartiImprumutate = NULL;
 }
 
+Utilizator::Utilizator(const Utilizator &obj):idUtilizator(contorIdUtilizator++)
+{
+    strcpy(this->numeUtilizator, obj.numeUtilizator);
+    strcpy(this->prenumeUtilizator, obj.prenumeUtilizator);
+    strcpy(this->sexUtilizator, obj.sexUtilizator);
+    this->data_nasterii.zi = obj.data_nasterii.zi;
+    this->data_nasterii.luna = obj.data_nasterii.luna;
+    this->data_nasterii.an = obj.data_nasterii.an;
+    this->numarTelefonic = new char [strlen(obj.numarTelefonic)+1];
+    strcpy(this->numarTelefonic, obj.numarTelefonic);
+    this->nrCartiImprumutate = obj.nrCartiImprumutate;
+    this->idCartiImprumutate = new int[obj.nrCartiImprumutate];
+    for (int i = 0; i<obj.nrCartiImprumutate; i++)
+        this->idCartiImprumutate[i] = obj.idCartiImprumutate[i];
+}
+
 Utilizator::~Utilizator()
 {
     if(this->numarTelefonic != NULL)
@@ -318,11 +335,13 @@ int main()
     char sex[] = "M";
     char nr[] = "0756927417";
     Utilizator c(nume, prenume, sex, {31, "mai", 2003}, nr, 2, a);
+    Utilizator c3(c);
     cout<<c.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c.getSexUtilizator()<<endl<<c.getDataNasterii().zi<<endl<<c.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c.getNumarTelefonic()<<endl<<c.getNrCartiImprumutate()<<endl;
-    for(int i = 0; i<c.getNrCartiImprumutate();i++)
-        cout<<c.getIdCartiImprumutate()[i]<<endl;
-    Utilizator c1("pistol", "tudor", "M", {3, "mai", 2003});
-    cout<<c1.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c1.getSexUtilizator()<<endl<<c1.getDataNasterii().zi<<endl<<c1.getDataNasterii().luna<<endl<<c1.getDataNasterii().an<<endl<<c1.getNumarTelefonic()<<endl<<c1.getNrCartiImprumutate()<<endl;
-    for(int i = 0; i<c1.getNrCartiImprumutate();i++)
-        cout<<c1.getIdCartiImprumutate()[i]<<endl;
+    cout<<c3.getNumeUtilizator()<<endl<<c3.getPrenumeUtilizator()<<endl<<c3.getSexUtilizator()<<endl<<c3.getDataNasterii().zi<<endl<<c3.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c3.getNumarTelefonic()<<endl<<c3.getNrCartiImprumutate()<<endl;
+//    for(int i = 0; i<c.getNrCartiImprumutate();i++)
+//        cout<<c.getIdCartiImprumutate()[i]<<endl;
+//    Utilizator c1("pistol", "tudor", "M", {3, "mai", 2003});
+//    cout<<c1.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c1.getSexUtilizator()<<endl<<c1.getDataNasterii().zi<<endl<<c1.getDataNasterii().luna<<endl<<c1.getDataNasterii().an<<endl<<c1.getNumarTelefonic()<<endl<<c1.getNrCartiImprumutate()<<endl;
+//    for(int i = 0; i<c1.getNrCartiImprumutate();i++)
+//        cout<<c1.getIdCartiImprumutate()[i]<<endl; 
 }
