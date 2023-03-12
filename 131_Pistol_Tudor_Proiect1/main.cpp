@@ -184,7 +184,9 @@ public:
     Utilizator(const Utilizator &obj); //copy-constructor
     ~Utilizator(); //destructor
 //operatori
-    Utilizator &operator = (const Utilizator &obj);
+    Utilizator &operator = (const Utilizator &obj); //supraincarcare operator atribuire
+    friend istream &operator >> (istream &in, Utilizator &u); //supraincarcare operator citire
+    friend ostream &operator << (ostream &out, const Utilizator &u); //supraincarcare operator afisare
 //getteri
     const int getIdUtilizator() {return this->idUtilizator;}
     char *getNumeUtilizator() {return this->numeUtilizator;}
@@ -294,6 +296,86 @@ Utilizator::~Utilizator()
     }
 }
 
+Utilizator &Utilizator::operator = (const Utilizator &obj)
+{
+    if(this->numarTelefonic != NULL)
+    {
+        delete [] this->numarTelefonic;
+        this->numarTelefonic = NULL;
+    }
+    if(this->idCartiImprumutate != NULL)
+    {
+        delete [] this->idCartiImprumutate;
+        this->idCartiImprumutate = NULL;
+    }
+    strcpy(this->numeUtilizator, obj.numeUtilizator);
+    strcpy(this->prenumeUtilizator, obj.prenumeUtilizator);
+    strcpy(this->sexUtilizator, obj.sexUtilizator);
+    this->data_nasterii.zi = obj.data_nasterii.zi;
+    this->data_nasterii.luna = obj.data_nasterii.luna;
+    this->data_nasterii.an = obj.data_nasterii.an;
+    this->numarTelefonic = new char [strlen(obj.numarTelefonic)+1];
+    strcpy(this->numarTelefonic, obj.numarTelefonic);
+    this->nrCartiImprumutate = obj.nrCartiImprumutate;
+    this->idCartiImprumutate = new int[obj.nrCartiImprumutate];
+    for (int i = 0; i<obj.nrCartiImprumutate; i++)
+        this->idCartiImprumutate[i] = obj.idCartiImprumutate[i];
+    return *this;
+}
+
+istream &operator >> (istream &in, Utilizator &u)
+{
+    cout  << "Nume utilizator: ";
+    in.get(u.numeUtilizator, 20);
+    in.clear();
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cout  << "Prenume utilizator: ";
+    in.get(u.prenumeUtilizator, 20);
+    in.clear();
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cout  << "Sex utilizator: ";
+    in >> u.sexUtilizator;
+    cout  << "Data de naștere [zi luna an]: ";
+    in >> u.data_nasterii.zi >> u.data_nasterii.luna >> u.data_nasterii.an;
+    if (u.numarTelefonic != NULL)
+    {
+        delete [] u.numarTelefonic;
+        u.numarTelefonic = NULL;
+    }
+    char aux3[20];
+    cout << "Numărul de telefon: ";
+    in >> aux3;
+    u.numarTelefonic = new char[strlen(aux3)+1];
+    strcpy(u.numarTelefonic, aux3);
+    cout << "Numărul de cărți împrumutate: ";
+    in >> u.nrCartiImprumutate;
+    if (u.idCartiImprumutate != NULL)
+    {
+        delete [] u.idCartiImprumutate;
+        u.idCartiImprumutate = NULL;
+    }
+    u.idCartiImprumutate = new int[u.nrCartiImprumutate];
+    cout << "Introduceți, pe rând, ID-ul fiecărei cărți împrumutate: ";
+    for (int i = 0; i < u.nrCartiImprumutate; i++)
+        in >> u.idCartiImprumutate[i];
+    return in;
+}
+
+ostream &operator << (ostream &out, const Utilizator &u)
+{
+    out << "Nume utilizator: " << u.numeUtilizator<<endl;
+    out << "Prenume utilizator: " << u.prenumeUtilizator<<endl;
+    out << "Sex utilizator: "<<u.sexUtilizator<<endl;
+    out << "Data de naștere: " << u.data_nasterii.zi << " " << u.data_nasterii.luna << " " << u.data_nasterii.an << endl;
+    out << "Numărul de telefon: " << u.numarTelefonic << endl;
+    out << "Numărul de cărți împrumutate: " <<u.nrCartiImprumutate << endl;
+    for(int i = 0; i<u.nrCartiImprumutate; i++)
+    {
+        out << "* Cartea numarul " << i+1 << ":" << u.idCartiImprumutate[i] << endl;
+    }
+    return out;
+}
+
 void Utilizator::setDataNasterii(dataNasterii data_nasterii)
 {
     this->data_nasterii.zi = data_nasterii.zi;
@@ -326,23 +408,25 @@ void Utilizator::setIdCartiImprumutate(int *idCartiImprumutate)
 
 int main()
 {
-    int a[] = {123, 13};
-    char b[] = "0756927417";
-    Utilizator U;
-    U.setNrCartiImprumutate(2);
-    U.setIdCartiImprumutate(a);
-    U.setNumarTelelefonic(b);
-    char nume[] = "pistol";
-    char prenume[] = "tudor";
-    char sex[] = "M";
-    char nr[] = "0756927417";
-    Utilizator c(nume, prenume, sex, {31, "mai", 2003}, nr, 2, a);
-    Utilizator c3(c);
-    cout<<c.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c.getSexUtilizator()<<endl<<c.getDataNasterii().zi<<endl<<c.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c.getNumarTelefonic()<<endl<<c.getNrCartiImprumutate()<<endl;
-    cout<<c3.getNumeUtilizator()<<endl<<c3.getPrenumeUtilizator()<<endl<<c3.getSexUtilizator()<<endl<<c3.getDataNasterii().zi<<endl<<c3.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c3.getNumarTelefonic()<<endl<<c3.getNrCartiImprumutate()<<endl;
-//    for(int i = 0; i<c.getNrCartiImprumutate();i++)
-//        cout<<c.getIdCartiImprumutate()[i]<<endl;
-//    Utilizator c1("pistol", "tudor", "M", {3, "mai", 2003});
+//    int a[] = {123, 13};
+//    char b[] = "0756927417";
+//    Utilizator U;
+//    U.setNrCartiImprumutate(2);
+//    U.setIdCartiImprumutate(a);
+//    U.setNumarTelelefonic(b);
+//    char nume[] = "pistol";
+//    char prenume[] = "tudor";
+//    char sex[] = "M";
+//    char nr[] = "0756927417";
+//    Utilizator c(nume, prenume, sex, {31, "mai", 2003}, nr, 2, a);
+//    Utilizator c3;
+    cin >> c3;
+    cout << c3;
+//    cout<<c.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c.getSexUtilizator()<<endl<<c.getDataNasterii().zi<<endl<<c.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c.getNumarTelefonic()<<endl<<c.getNrCartiImprumutate()<<endl;
+//    cout<<c3.getNumeUtilizator()<<endl<<c3.getPrenumeUtilizator()<<endl<<c3.getSexUtilizator()<<endl<<c3.getDataNasterii().zi<<endl<<c3.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c3.getNumarTelefonic()<<endl<<c3.getNrCartiImprumutate()<<endl;
+//    for(int i = 0; i<c3.getNrCartiImprumutate();i++)
+//        cout<<c3.getIdCartiImprumutate()[i]<<endl;
+//
 //    cout<<c1.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c1.getSexUtilizator()<<endl<<c1.getDataNasterii().zi<<endl<<c1.getDataNasterii().luna<<endl<<c1.getDataNasterii().an<<endl<<c1.getNumarTelefonic()<<endl<<c1.getNrCartiImprumutate()<<endl;
 //    for(int i = 0; i<c1.getNrCartiImprumutate();i++)
 //        cout<<c1.getIdCartiImprumutate()[i]<<endl; 
