@@ -149,7 +149,7 @@ istream &operator >> (istream &in, Carte &ca)
     in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     cout << "În ce an a fost publicată? ";
     in >> ca.anAparitie;
-    cout << "Este disponibilă pentru împrumut? ";
+    cout << "Este disponibilă pentru împrumut?[0/1] ";
     in >> ca.status;
     return in;
 }
@@ -406,8 +406,201 @@ void Utilizator::setIdCartiImprumutate(int *idCartiImprumutate)
         this->idCartiImprumutate[i] = idCartiImprumutate[i];
 }
 
+class Bibliotecar{
+private:
+    const int idBibliotecar;
+    static int contorIdBibliotecar;
+    char *numeBibliotecar;
+    char *prenumeBibliotecar;
+    int varstaBibliotecar;
+    float venitLunar;
+    struct dataAngajarii{
+        int zi;
+        int luna;
+        int an;
+    }data_angajarii;
+    int nrZileLucruSaptamanal;
+    char programSaptamanal[7][20];
+public:
+    float getVenitLunar() {return this->venitLunar;}
+    void setVenitLunar(float venitLunar) {this->venitLunar = venitLunar;}
+//constructori
+    Bibliotecar();
+    Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, int varstaBibliotecar, float venitLunar, dataAngajarii data_angajarii, int nrZileLucruSaptamanal, char programSaptamanal[7][20]);
+    Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar);
+    Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, dataAngajarii data_angajarii);
+    Bibliotecar(const Bibliotecar &obj); //copy-constructor
+    ~Bibliotecar();
+//operatori
+    Bibliotecar &operator =(const Bibliotecar &obj);
+    friend istream &operator >> (istream &in, Bibliotecar &b);
+    friend ostream &operator << (ostream &out, const Bibliotecar &b);
+};
+
+int Bibliotecar::contorIdBibliotecar = 100;
+
+Bibliotecar::Bibliotecar():idBibliotecar(contorIdBibliotecar++)
+{
+    this->numeBibliotecar = new char[strlen("Necunoscut")+1];
+    strcpy(this->numeBibliotecar, "Necunoscut");
+    this->prenumeBibliotecar = new char[strlen("Necunoscut")+1];
+    strcpy(this->prenumeBibliotecar, "Necunoscut");
+    this->varstaBibliotecar = 0;
+    this->venitLunar = 0;
+    this->data_angajarii.zi = 0;
+    this->data_angajarii.luna = 0;
+    this->data_angajarii.an = 0;
+    this->nrZileLucruSaptamanal = 0;
+    strcpy(this->programSaptamanal[0], "Necunoscut");
+}
+
+Bibliotecar::Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, int varstaBibliotecar, float venitLunar, dataAngajarii data_angajarii, int nrZileLucruSaptamanal, char programSaptamanal[7][20]):idBibliotecar(contorIdBibliotecar++)
+{
+    this->numeBibliotecar = new char[strlen(numeBibliotecar)+1];
+    strcpy(this->numeBibliotecar, numeBibliotecar);
+    this->prenumeBibliotecar = new char[strlen(prenumeBibliotecar)+1];
+    strcpy(this->prenumeBibliotecar, prenumeBibliotecar);
+    this->varstaBibliotecar = varstaBibliotecar;
+    this->venitLunar = venitLunar;
+    this->data_angajarii.zi = data_angajarii.zi;
+    this->data_angajarii.luna = data_angajarii.luna;
+    this->data_angajarii.an = data_angajarii.an;
+    this->nrZileLucruSaptamanal = nrZileLucruSaptamanal;
+    for (int i = 0; i<this->nrZileLucruSaptamanal; i++)
+        strcpy(this->programSaptamanal[i], programSaptamanal[i]);
+}
+
+Bibliotecar::Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar):idBibliotecar(contorIdBibliotecar++)
+{
+    this->numeBibliotecar = new char[strlen(numeBibliotecar)+1];
+    strcpy(this->numeBibliotecar, numeBibliotecar);
+    this->prenumeBibliotecar = new char[strlen(prenumeBibliotecar)+1];
+    strcpy(this->prenumeBibliotecar, prenumeBibliotecar);
+    this->varstaBibliotecar = 0;
+    this->venitLunar = 0;
+    this->data_angajarii.zi = 0;
+    this->data_angajarii.luna = 0;
+    this->data_angajarii.an = 0;
+    this->nrZileLucruSaptamanal = 0;
+    strcpy(this->programSaptamanal[0], "Necunoscut");
+}
+
+Bibliotecar::Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, dataAngajarii data_angajarii):idBibliotecar(contorIdBibliotecar++)
+{
+    this->numeBibliotecar = new char[strlen(numeBibliotecar)+1];
+    strcpy(this->numeBibliotecar, numeBibliotecar);
+    this->prenumeBibliotecar = new char[strlen(prenumeBibliotecar)+1];
+    strcpy(this->prenumeBibliotecar, prenumeBibliotecar);
+    this->varstaBibliotecar = 0;
+    this->venitLunar = 0;
+    this->data_angajarii.zi = data_angajarii.zi;
+    this->data_angajarii.luna = data_angajarii.luna;
+    this->data_angajarii.an = data_angajarii.an;
+    this->nrZileLucruSaptamanal = 0;
+    strcpy(this->programSaptamanal[0], "Necunoscut");
+}
+
+Bibliotecar::Bibliotecar(const Bibliotecar &obj):idBibliotecar(contorIdBibliotecar++)
+{
+    this->numeBibliotecar = new char[strlen(obj.numeBibliotecar)+1];
+    strcpy(this->numeBibliotecar, obj.numeBibliotecar);
+    this->prenumeBibliotecar = new char[strlen(obj.prenumeBibliotecar)+1];
+    strcpy(this->prenumeBibliotecar, obj.prenumeBibliotecar);
+    this->varstaBibliotecar = obj.varstaBibliotecar;
+    this->venitLunar = obj.venitLunar;
+    this->data_angajarii.zi = obj.data_angajarii.zi;
+    this->data_angajarii.luna = obj.data_angajarii.luna;
+    this->data_angajarii.an = obj.data_angajarii.an;
+    this->nrZileLucruSaptamanal = obj.nrZileLucruSaptamanal;
+    for (int i = 0; i<this->nrZileLucruSaptamanal; i++)
+        strcpy(this->programSaptamanal[i], obj.programSaptamanal[i]);
+}
+
+Bibliotecar::~Bibliotecar()
+{
+    if(this->numeBibliotecar != NULL)
+    {
+        delete [] this->numeBibliotecar;
+        this->numeBibliotecar = NULL;
+    }
+    if(this->prenumeBibliotecar != NULL)
+    {
+        delete [] this->prenumeBibliotecar;
+        this->prenumeBibliotecar = NULL;
+    }
+}
+
+Bibliotecar &Bibliotecar::operator =(const Bibliotecar &obj)
+{
+    this->numeBibliotecar = new char[strlen(obj.numeBibliotecar)+1];
+    strcpy(this->numeBibliotecar, obj.numeBibliotecar);
+    this->prenumeBibliotecar = new char[strlen(obj.prenumeBibliotecar)+1];
+    strcpy(this->prenumeBibliotecar, obj.prenumeBibliotecar);
+    this->varstaBibliotecar = obj.varstaBibliotecar;
+    this->venitLunar = obj.venitLunar;
+    this->data_angajarii.zi = obj.data_angajarii.zi;
+    this->data_angajarii.luna = obj.data_angajarii.luna;
+    this->data_angajarii.an = obj.data_angajarii.an;
+    this->nrZileLucruSaptamanal = obj.nrZileLucruSaptamanal;
+    for (int i = 0; i<this->nrZileLucruSaptamanal; i++)
+        strcpy(this->programSaptamanal[i], obj.programSaptamanal[i]);
+    return *this;
+}
+
+istream &operator >> (istream &in, Bibliotecar &b)
+{
+    cout << "Introduceti numele bibliotecarului ";
+    char auxb1[20];
+    in.get(auxb1, 20);
+    b.numeBibliotecar = new char[strlen(auxb1)+1];
+    strcpy(b.numeBibliotecar, auxb1);
+    in.clear();
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cout << "Introduceti prenumele bibliotecarului ";
+    char auxb2[20];
+    in.get(auxb2, 20);
+    b.prenumeBibliotecar = new char[strlen(auxb2)+1];
+    strcpy(b.prenumeBibliotecar, auxb2);
+    in.clear();
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cout << "Introduceti varsta bibliotecarului: ";
+    in >> b.varstaBibliotecar;
+    cout << "Introduceti venitul lunar: ";
+    in >> b.venitLunar;
+    cout << "Introduceti data angajarii[zi luna an]: ";
+    in >> b.data_angajarii.zi >> b.data_angajarii.luna >> b.data_angajarii.an;
+    cout << "Introduceti numarul de zile lucratoare pe saptamana: ";
+    in >> b.nrZileLucruSaptamanal;
+    cout << "Introduceti, pe rand, ziua din saptamana alaturi de programul orar averent[zi hh.min_inceput-hh.min_sfarsit]";
+    for (int i = 0; i<b.nrZileLucruSaptamanal; i++)
+    {
+        in.get(b.programSaptamanal[i], 30);
+        in.clear();
+        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    return in;
+}
+
+ostream &operator << (ostream &out, const Bibliotecar &b)
+{
+    out << "Numele bibliotecarului: " << b.numeBibliotecar << endl;
+    out << "Prenumele bibliotecarului: " << b.prenumeBibliotecar << endl;
+    out << "Varsta: " << b.varstaBibliotecar << endl;
+    out << "Venitul lunar: " << b.venitLunar << endl;
+    out << "Data angajarii: " << b.data_angajarii.zi << "." << b.data_angajarii.luna << "." << b.data_angajarii.an << endl;
+    out << b.numeBibliotecar << " lucreaza " << b.nrZileLucruSaptamanal << " pe saptamana." << endl;
+    out << "Programul saptamanal este urmatorul: ";
+    for (int i = 0; i<b.nrZileLucruSaptamanal; i++)
+    {
+        out << "\t" << b.programSaptamanal << endl;
+    }
+    return out;
+}
+
 int main()
 {
+    Bibliotecar U;
+    cout << U;
 //    int a[] = {123, 13};
 //    char b[] = "0756927417";
 //    Utilizator U;
@@ -419,9 +612,9 @@ int main()
 //    char sex[] = "M";
 //    char nr[] = "0756927417";
 //    Utilizator c(nume, prenume, sex, {31, "mai", 2003}, nr, 2, a);
-//    Utilizator c3;
-    cin >> c3;
-    cout << c3;
+//    Utilizator U;
+//    cin >> U;
+//    cout << U;
 //    cout<<c.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c.getSexUtilizator()<<endl<<c.getDataNasterii().zi<<endl<<c.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c.getNumarTelefonic()<<endl<<c.getNrCartiImprumutate()<<endl;
 //    cout<<c3.getNumeUtilizator()<<endl<<c3.getPrenumeUtilizator()<<endl<<c3.getSexUtilizator()<<endl<<c3.getDataNasterii().zi<<endl<<c3.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c3.getNumarTelefonic()<<endl<<c3.getNrCartiImprumutate()<<endl;
 //    for(int i = 0; i<c3.getNrCartiImprumutate();i++)
@@ -429,5 +622,5 @@ int main()
 //
 //    cout<<c1.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c1.getSexUtilizator()<<endl<<c1.getDataNasterii().zi<<endl<<c1.getDataNasterii().luna<<endl<<c1.getDataNasterii().an<<endl<<c1.getNumarTelefonic()<<endl<<c1.getNrCartiImprumutate()<<endl;
 //    for(int i = 0; i<c1.getNrCartiImprumutate();i++)
-//        cout<<c1.getIdCartiImprumutate()[i]<<endl; 
+//        cout<<c1.getIdCartiImprumutate()[i]<<endl;
 }
