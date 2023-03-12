@@ -183,6 +183,8 @@ public:
     Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii);
     Utilizator(const Utilizator &obj); //copy-constructor
     ~Utilizator(); //destructor
+//operatori
+    Utilizator &operator = (const Utilizator &obj);
 //getteri
     const int getIdUtilizator() {return this->idUtilizator;}
     char *getNumeUtilizator() {return this->numeUtilizator;}
