@@ -549,14 +549,14 @@ Bibliotecar &Bibliotecar::operator =(const Bibliotecar &obj)
 
 istream &operator >> (istream &in, Bibliotecar &b)
 {
-    cout << "Introduceti numele bibliotecarului ";
+    cout << "Introduceti numele bibliotecarului: ";
     char auxb1[20];
     in.get(auxb1, 20);
     b.numeBibliotecar = new char[strlen(auxb1)+1];
     strcpy(b.numeBibliotecar, auxb1);
     in.clear();
     in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    cout << "Introduceti prenumele bibliotecarului ";
+    cout << "Introduceti prenumele bibliotecarului: ";
     char auxb2[20];
     in.get(auxb2, 20);
     b.prenumeBibliotecar = new char[strlen(auxb2)+1];
@@ -571,12 +571,10 @@ istream &operator >> (istream &in, Bibliotecar &b)
     in >> b.data_angajarii.zi >> b.data_angajarii.luna >> b.data_angajarii.an;
     cout << "Introduceti numarul de zile lucratoare pe saptamana: ";
     in >> b.nrZileLucruSaptamanal;
-    cout << "Introduceti, pe rand, ziua din saptamana alaturi de programul orar averent[zi hh.min_inceput-hh.min_sfarsit]";
+    cout << "Introduceti, pe rand, ziua din saptamana alaturi de programul orar averent[zi->hh:mm-hh:mm]: ";
     for (int i = 0; i<b.nrZileLucruSaptamanal; i++)
     {
-        in.get(b.programSaptamanal[i], 30);
-        in.clear();
-        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        in >> b.programSaptamanal[i];
     }
     return in;
 }
@@ -585,14 +583,13 @@ ostream &operator << (ostream &out, const Bibliotecar &b)
 {
     out << "Numele bibliotecarului: " << b.numeBibliotecar << endl;
     out << "Prenumele bibliotecarului: " << b.prenumeBibliotecar << endl;
-    out << "Varsta: " << b.varstaBibliotecar << endl;
-    out << "Venitul lunar: " << b.venitLunar << endl;
+    out << "Varsta: " << b.varstaBibliotecar << " ani" << endl;
+    out << "Venitul lunar: " << b.venitLunar << " RON" << endl;
     out << "Data angajarii: " << b.data_angajarii.zi << "." << b.data_angajarii.luna << "." << b.data_angajarii.an << endl;
-    out << b.numeBibliotecar << " lucreaza " << b.nrZileLucruSaptamanal << " pe saptamana." << endl;
-    out << "Programul saptamanal este urmatorul: ";
+    out << b.numeBibliotecar << " lucreaza " << b.nrZileLucruSaptamanal << " zile pe saptamana, iar programul saptamanal este urmatorul: " << endl;
     for (int i = 0; i<b.nrZileLucruSaptamanal; i++)
     {
-        out << "\t" << b.programSaptamanal << endl;
+        out << "\t" << b.programSaptamanal[i] << endl;
     }
     return out;
 }
@@ -600,6 +597,7 @@ ostream &operator << (ostream &out, const Bibliotecar &b)
 int main()
 {
     Bibliotecar U;
+    cin >> U;
     cout << U;
 //    int a[] = {123, 13};
 //    char b[] = "0756927417";
