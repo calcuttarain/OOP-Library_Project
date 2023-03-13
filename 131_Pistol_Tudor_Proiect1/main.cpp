@@ -552,6 +552,7 @@ istream &operator >> (istream &in, Bibliotecar &b)
     cout << "Introduceti numele bibliotecarului: ";
     char auxb1[20];
     in.get(auxb1, 20);
+    delete [] b.numeBibliotecar;
     b.numeBibliotecar = new char[strlen(auxb1)+1];
     strcpy(b.numeBibliotecar, auxb1);
     in.clear();
@@ -559,6 +560,7 @@ istream &operator >> (istream &in, Bibliotecar &b)
     cout << "Introduceti prenumele bibliotecarului: ";
     char auxb2[20];
     in.get(auxb2, 20);
+    delete [] b.prenumeBibliotecar;
     b.prenumeBibliotecar = new char[strlen(auxb2)+1];
     strcpy(b.prenumeBibliotecar, auxb2);
     in.clear();
@@ -586,7 +588,7 @@ ostream &operator << (ostream &out, const Bibliotecar &b)
     out << "Varsta: " << b.varstaBibliotecar << " ani" << endl;
     out << "Venitul lunar: " << b.venitLunar << " RON" << endl;
     out << "Data angajarii: " << b.data_angajarii.zi << "." << b.data_angajarii.luna << "." << b.data_angajarii.an << endl;
-    out << b.numeBibliotecar << " lucreaza " << b.nrZileLucruSaptamanal << " zile pe saptamana, iar programul saptamanal este urmatorul: " << endl;
+    out << b.prenumeBibliotecar << " " << b.numeBibliotecar << " lucreaza " << b.nrZileLucruSaptamanal << " zile pe saptamana, iar programul  saptamanal este urmatorul: " << endl;
     for (int i = 0; i<b.nrZileLucruSaptamanal; i++)
     {
         out << "\t" << b.programSaptamanal[i] << endl;
@@ -594,9 +596,153 @@ ostream &operator << (ostream &out, const Bibliotecar &b)
     return out;
 }
 
+class Sala{
+private:
+    const int nrSala;
+    static int contorSala;
+    int nrLocuriSala;
+    int nrLocuriOcupate;
+    int *locuriOcupate;
+    struct dimensiune{
+        double lungime;
+        double latime;
+    }dimensiuneSala;
+public:
+    dimensiune getDimensiuneSala() {return this->dimensiuneSala;}
+    const void setDimensiuneSala(dimensiune dimensiuneSala);
+//constructori
+    Sala();
+    Sala(int nrLocuriSala, int nrLocuriOcupate, int *locuriOcupate, dimensiune dimensiuneSala);
+    Sala(int nrLocuriSala, dimensiune dimensiuneSala);
+    Sala(int nrLocuriSala, int nrLocuriOcupate);
+    Sala(const Sala &obj); //copy-constructor
+    ~Sala();
+//operatori
+    Sala &operator =(const Sala &s);
+    friend istream &operator >> (istream &in, Sala &b);
+    friend ostream &operator << (ostream &out, const Sala b);
+};
+
+int Sala::contorSala = 0;
+
+const void Sala::setDimensiuneSala(dimensiune dimensiuneSala)
+{
+    this->dimensiuneSala.lungime = dimensiuneSala.lungime;
+    this->dimensiuneSala.latime = dimensiuneSala.latime;
+}
+
+Sala::Sala():nrSala(contorSala++)
+{
+    nrLocuriSala = 0;
+    nrLocuriOcupate = 0;
+    locuriOcupate = NULL;
+    dimensiuneSala.lungime = 0;
+    dimensiuneSala.latime = 0;
+}
+
+Sala::Sala(int nrLocuriSala, int nrLocuriOcupate, int *locuriOcupate, dimensiune dimensiuneSala):nrSala(contorSala++)
+{
+    this->nrLocuriSala = nrLocuriSala;
+    this->nrLocuriOcupate = nrLocuriOcupate;
+    this->locuriOcupate = new int[nrLocuriOcupate];
+    for(int i = 0; i<nrLocuriOcupate; i++)
+        this->locuriOcupate[i] = locuriOcupate[i];
+    this->dimensiuneSala.lungime = dimensiuneSala.lungime;
+    this->dimensiuneSala.latime = dimensiuneSala.latime;
+}
+
+Sala::Sala(int nrLocuriSala, dimensiune dimensiuneSala):nrSala(contorSala++)
+{
+    this->nrLocuriSala = nrLocuriSala;
+    nrLocuriOcupate = 0;
+    locuriOcupate = NULL;
+    this->dimensiuneSala.lungime = dimensiuneSala.lungime;
+    this->dimensiuneSala.latime = dimensiuneSala.lungime;
+}
+
+Sala::Sala(int nrLocuriSala, int nrLocuriOcupate):nrSala(contorSala++)
+{
+    this->nrLocuriSala = nrLocuriSala;
+    this->nrLocuriOcupate = nrLocuriOcupate;
+    locuriOcupate = NULL;
+    dimensiuneSala.lungime = 0;
+    dimensiuneSala.latime = 0;
+}
+
+Sala::Sala(const Sala &obj):nrSala(contorSala++)
+{
+    this->nrLocuriSala = obj.nrLocuriSala;
+    this->nrLocuriOcupate = obj.nrLocuriOcupate;
+    locuriOcupate = new int[obj.nrLocuriOcupate];
+    for(int i = 0; i<obj.nrLocuriOcupate; i++)
+        this->locuriOcupate[i] = obj.locuriOcupate[i];
+    this->dimensiuneSala.lungime = obj.dimensiuneSala.lungime;
+    this->dimensiuneSala.latime = obj.dimensiuneSala.latime;
+}
+
+Sala &Sala::operator =(const Sala &s)
+{
+    
+    this->nrLocuriSala = s.nrLocuriSala;
+    this->nrLocuriOcupate = s.nrLocuriOcupate;
+    locuriOcupate = new int[s.nrLocuriOcupate];
+    for(int i = 0; i<s.nrLocuriOcupate; i++)
+        this->locuriOcupate[i] = s.locuriOcupate[i];
+    this->dimensiuneSala.lungime = s.dimensiuneSala.lungime;
+    this->dimensiuneSala.latime = s.dimensiuneSala.latime;
+    return *this;
+}
+
+istream &operator >> (istream &in, Sala &s)
+{
+    cout << "Introduceti numarul de locuri al salii: ";
+    in >> s.nrLocuriSala;
+    cout << "Cate locuri sunt ocupate acum? ";
+    in >> s.nrLocuriOcupate;
+    if (s.nrLocuriOcupate != 0)
+    {
+        cout << "Care locuri sunt ocupate? ";
+        if (s.locuriOcupate != NULL)
+        {
+            delete [] s.locuriOcupate;
+            s.locuriOcupate = NULL;
+        }
+        s.locuriOcupate = new int[s.nrLocuriOcupate];
+        for (int i=0; i<s.nrLocuriOcupate; i++)
+            in >> s.locuriOcupate[i];
+    }
+    cout << "Care este dimensiunea salii[lungime latime]? ";
+    in >> s.dimensiuneSala.lungime >> s.dimensiuneSala.latime;
+    return in;
+}
+
+ostream &operator << (ostream &out, const Sala s)
+{
+    out << "Sala numarul " << s.nrSala << "." << endl;
+    out << "Capacitatea salii este de " << s.nrLocuriSala << " locuri, iar dimensiunea ei este de " << s.dimensiuneSala.lungime << "X" << s.dimensiuneSala.latime << " metri." << endl;
+    out << "Numarul de locuri libere: " << s.nrLocuriSala - s.nrLocuriOcupate << endl;
+    if(s.nrLocuriOcupate != 0)
+    {
+        out << "Locurile ocupate sunt: ";
+        for (int i = 0; i<s.nrLocuriOcupate-1; i++)
+            out << s.locuriOcupate[i] << ", ";
+        out << s.locuriOcupate[s.nrLocuriOcupate-1] << "." << endl;
+    }
+    return out;
+}
+
+Sala::~Sala()
+{
+    if(locuriOcupate != NULL)
+    {
+        delete [] locuriOcupate;
+        locuriOcupate = NULL;
+    }
+}
+
 int main()
 {
-    Bibliotecar U;
+    Sala U;
     cin >> U;
     cout << U;
 //    int a[] = {123, 13};
