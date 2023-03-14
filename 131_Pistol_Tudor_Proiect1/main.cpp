@@ -718,57 +718,57 @@ ostream &operator << (ostream &out, const Sala &s)
 
 int main()
 {
-
-    Carte C[100];
-    for (int i = 0; i<= 2; i++)
-    {
-        cin >> C[i];
-        cout << endl;
-    }
-
-    Utilizator U[100];
-    for (int i = 0; i<= 2; i++)
-    {
-        cin >> U[i];
-        cout << endl;
-    }
-
-    Bibliotecar B[100];
-    for (int i = 0; i<= 2; i++)
-    {
-        cin >> B[i];
-        cout << endl;
-    }
-    Sala S[100];
-    for (int i = 0; i<= 2; i++)
-    {
-        cin >> S[i];
-        cout << endl;
-    }
-    cout << "Cartile: " << endl;
-    for (int i = 0; i<= 2; i++)
-    {
-        cout << C[i];
-        cout << endl;
-    }
-    cout << "Utilizatorii:" << endl;
-    for (int i = 0; i<= 2; i++)
-    {
-        cout << U[i];
-        cout << endl;
-    }
-    cout << "Bibliotecarii: " << endl;
-    for (int i = 0; i<= 2; i++)
-    {
-        cout << B[i];
-        cout << endl;
-    }
-    cout << "Salile: " << endl;
-    for (int i = 0; i<= 2; i++)
-    {
-        cout << S[i];
-        cout << endl;
-    }
+//teste
+//    Carte C[100];
+//    for (int i = 0; i<= 2; i++)
+//    {
+//        cin >> C[i];
+//        cout << endl;
+//    }
+//
+//    Utilizator U[100];
+//    for (int i = 0; i<= 2; i++)
+//    {
+//        cin >> U[i];
+//        cout << endl;
+//    }
+//
+//    Bibliotecar B[100];
+//    for (int i = 0; i<= 2; i++)
+//    {
+//        cin >> B[i];
+//        cout << endl;
+//    }
+//    Sala S[100];
+//    for (int i = 0; i<= 2; i++)
+//    {
+//        cin >> S[i];
+//        cout << endl;
+//    }
+//    cout << "Cartile: " << endl;
+//    for (int i = 0; i<= 2; i++)
+//    {
+//        cout << C[i];
+//        cout << endl;
+//    }
+//    cout << "Utilizatorii:" << endl;
+//    for (int i = 0; i<= 2; i++)
+//    {
+//        cout << U[i];
+//        cout << endl;
+//    }
+//    cout << "Bibliotecarii: " << endl;
+//    for (int i = 0; i<= 2; i++)
+//    {
+//        cout << B[i];
+//        cout << endl;
+//    }
+//    cout << "Salile: " << endl;
+//    for (int i = 0; i<= 2; i++)
+//    {
+//        cout << S[i];
+//        cout << endl;
+//    }
 
 //    Sala B;
 
