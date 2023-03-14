@@ -125,32 +125,23 @@ ostream &operator << (ostream &out, const Carte &c)
 
 istream &operator >> (istream &in, Carte &ca)
 {
-    if (ca.autor != NULL)
-    {
-        delete [] ca.autor;
-        ca.autor = NULL;
-    }
     cout << "Care este titlul cărții? ";
     //aloc spatiu random
     char aux1[100];
-    //citesc sirul de caractere cu functia .get() ca sa ia in considerare si spatiile
-    in.get(aux1, 100);
+    //citesc sirul de caractere cu functia .getline() ca sa ia in considerare si spatiile
+    in.getline(aux1, 100);
     ca.titlu = aux1;
-    //eliberez stream bufferul
-    in.clear();
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //?
     cout << "Cine este autorul? ";
-    //acelasi lucru ca la string
     char aux2[100];
-    in.get(aux2, 100);
+    in.getline(aux2, 100); //acelasi lucru ca la string
+    delete [] ca.autor;
     ca.autor = new char [strlen(aux2)+1];
     strcpy(ca.autor, aux2);
-    in.clear();
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     cout << "În ce an a fost publicată? ";
     in >> ca.anAparitie;
     cout << "Este disponibilă pentru împrumut?[0/1] ";
     in >> ca.status;
+    in.get(); //fac posibila urmatoarea citire pentru urmatorul obiect(citind enter-ul), in cazul unui vector de obiecte, altfel va considera tasta enter ca titlu pentru urmatoarea carte
     return in;
 }
 
@@ -326,22 +317,14 @@ Utilizator &Utilizator::operator = (const Utilizator &obj)
 istream &operator >> (istream &in, Utilizator &u)
 {
     cout  << "Nume utilizator: ";
-    in.get(u.numeUtilizator, 20);
-    in.clear();
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    in.getline(u.numeUtilizator, 20);
     cout  << "Prenume utilizator: ";
-    in.get(u.prenumeUtilizator, 20);
-    in.clear();
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    in.getline(u.prenumeUtilizator, 20);
     cout  << "Sex utilizator: ";
     in >> u.sexUtilizator;
     cout  << "Data de naștere [zi luna an]: ";
     in >> u.data_nasterii.zi >> u.data_nasterii.luna >> u.data_nasterii.an;
-    if (u.numarTelefonic != NULL)
-    {
-        delete [] u.numarTelefonic;
-        u.numarTelefonic = NULL;
-    }
+    delete [] u.numarTelefonic;
     char aux3[20];
     cout << "Numărul de telefon: ";
     in >> aux3;
@@ -349,20 +332,18 @@ istream &operator >> (istream &in, Utilizator &u)
     strcpy(u.numarTelefonic, aux3);
     cout << "Numărul de cărți împrumutate: ";
     in >> u.nrCartiImprumutate;
-    if (u.idCartiImprumutate != NULL)
-    {
-        delete [] u.idCartiImprumutate;
-        u.idCartiImprumutate = NULL;
-    }
+    delete [] u.idCartiImprumutate;
     u.idCartiImprumutate = new int[u.nrCartiImprumutate];
     cout << "Introduceți, pe rând, ID-ul fiecărei cărți împrumutate: ";
     for (int i = 0; i < u.nrCartiImprumutate; i++)
         in >> u.idCartiImprumutate[i];
+    in.get();
     return in;
 }
 
 ostream &operator << (ostream &out, const Utilizator &u)
 {
+    out << "ID-ul utilizatorului: " << u.idUtilizator << endl;
     out << "Nume utilizator: " << u.numeUtilizator<<endl;
     out << "Prenume utilizator: " << u.prenumeUtilizator<<endl;
     out << "Sex utilizator: "<<u.sexUtilizator<<endl;
@@ -420,13 +401,13 @@ private:
         int an;
     }data_angajarii;
     int nrZileLucruSaptamanal;
-    char programSaptamanal[7][20];
+    char programSaptamanal[7][50];
 public:
     float getVenitLunar() {return this->venitLunar;}
     void setVenitLunar(float venitLunar) {this->venitLunar = venitLunar;}
 //constructori
     Bibliotecar();
-    Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, int varstaBibliotecar, float venitLunar, dataAngajarii data_angajarii, int nrZileLucruSaptamanal, char programSaptamanal[7][20]);
+    Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, int varstaBibliotecar, float venitLunar, dataAngajarii data_angajarii, int nrZileLucruSaptamanal, char programSaptamanal[7][50]);
     Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar);
     Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, dataAngajarii data_angajarii);
     Bibliotecar(const Bibliotecar &obj); //copy-constructor
@@ -454,7 +435,7 @@ Bibliotecar::Bibliotecar():idBibliotecar(contorIdBibliotecar++)
     strcpy(this->programSaptamanal[0], "Necunoscut");
 }
 
-Bibliotecar::Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, int varstaBibliotecar, float venitLunar, dataAngajarii data_angajarii, int nrZileLucruSaptamanal, char programSaptamanal[7][20]):idBibliotecar(contorIdBibliotecar++)
+Bibliotecar::Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, int varstaBibliotecar, float venitLunar, dataAngajarii data_angajarii, int nrZileLucruSaptamanal, char programSaptamanal[7][50]):idBibliotecar(contorIdBibliotecar++)
 {
     this->numeBibliotecar = new char[strlen(numeBibliotecar)+1];
     strcpy(this->numeBibliotecar, numeBibliotecar);
@@ -551,20 +532,16 @@ istream &operator >> (istream &in, Bibliotecar &b)
 {
     cout << "Introduceti numele bibliotecarului: ";
     char auxb1[20];
-    in.get(auxb1, 20);
+    in.getline(auxb1, 20);
     delete [] b.numeBibliotecar;
     b.numeBibliotecar = new char[strlen(auxb1)+1];
     strcpy(b.numeBibliotecar, auxb1);
-    in.clear();
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     cout << "Introduceti prenumele bibliotecarului: ";
     char auxb2[20];
-    in.get(auxb2, 20);
+    in.getline(auxb2, 20);
     delete [] b.prenumeBibliotecar;
     b.prenumeBibliotecar = new char[strlen(auxb2)+1];
     strcpy(b.prenumeBibliotecar, auxb2);
-    in.clear();
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     cout << "Introduceti varsta bibliotecarului: ";
     in >> b.varstaBibliotecar;
     cout << "Introduceti venitul lunar: ";
@@ -575,14 +552,15 @@ istream &operator >> (istream &in, Bibliotecar &b)
     in >> b.nrZileLucruSaptamanal;
     cout << "Introduceti, pe rand, ziua din saptamana alaturi de programul orar averent[zi->hh:mm-hh:mm]: ";
     for (int i = 0; i<b.nrZileLucruSaptamanal; i++)
-    {
         in >> b.programSaptamanal[i];
-    }
+    in.get();
     return in;
+    
 }
 
 ostream &operator << (ostream &out, const Bibliotecar &b)
 {
+    out << "ID-ul Bibliotecarului: " << b.idBibliotecar << endl;
     out << "Numele bibliotecarului: " << b.numeBibliotecar << endl;
     out << "Prenumele bibliotecarului: " << b.prenumeBibliotecar << endl;
     out << "Varsta: " << b.varstaBibliotecar << " ani" << endl;
@@ -590,9 +568,7 @@ ostream &operator << (ostream &out, const Bibliotecar &b)
     out << "Data angajarii: " << b.data_angajarii.zi << "." << b.data_angajarii.luna << "." << b.data_angajarii.an << endl;
     out << b.prenumeBibliotecar << " " << b.numeBibliotecar << " lucreaza " << b.nrZileLucruSaptamanal << " zile pe saptamana, iar programul  saptamanal este urmatorul: " << endl;
     for (int i = 0; i<b.nrZileLucruSaptamanal; i++)
-    {
         out << "\t" << b.programSaptamanal[i] << endl;
-    }
     return out;
 }
 
@@ -602,7 +578,7 @@ private:
     static int contorSala;
     int nrLocuriSala;
     int nrLocuriOcupate;
-    int *locuriOcupate;
+    int locuriOcupate[50];
     struct dimensiune{
         double lungime;
         double latime;
@@ -612,15 +588,17 @@ public:
     const void setDimensiuneSala(dimensiune dimensiuneSala);
 //constructori
     Sala();
-    Sala(int nrLocuriSala, int nrLocuriOcupate, int *locuriOcupate, dimensiune dimensiuneSala);
+    Sala(int nrLocuriSala, int nrLocuriOcupate, int locuriOcupate[50], dimensiune dimensiuneSala);
     Sala(int nrLocuriSala, dimensiune dimensiuneSala);
     Sala(int nrLocuriSala, int nrLocuriOcupate);
     Sala(const Sala &obj); //copy-constructor
-    ~Sala();
+    ~Sala() {}
 //operatori
     Sala &operator =(const Sala &s);
-    friend istream &operator >> (istream &in, Sala &b);
-    friend ostream &operator << (ostream &out, const Sala b);
+//    Sala &operator --(); //vezi locuriOcupate
+//    Sala &operator ++(int loc) {this->nrLocuriOcupate += 1; this->locuriOcupate[this->nrLocuriOcupate] = loc; return *this;}
+    friend istream &operator >> (istream &in, Sala &s);
+    friend ostream &operator << (ostream &out, const Sala &s);
 };
 
 int Sala::contorSala = 0;
@@ -631,49 +609,49 @@ const void Sala::setDimensiuneSala(dimensiune dimensiuneSala)
     this->dimensiuneSala.latime = dimensiuneSala.latime;
 }
 
-Sala::Sala():nrSala(contorSala++)
+Sala::Sala():nrSala(++contorSala)
 {
     nrLocuriSala = 0;
     nrLocuriOcupate = 0;
-    locuriOcupate = NULL;
+    locuriOcupate[0] = NULL;
     dimensiuneSala.lungime = 0;
     dimensiuneSala.latime = 0;
 }
 
-Sala::Sala(int nrLocuriSala, int nrLocuriOcupate, int *locuriOcupate, dimensiune dimensiuneSala):nrSala(contorSala++)
+Sala::Sala(int nrLocuriSala, int nrLocuriOcupate, int *locuriOcupate, dimensiune dimensiuneSala):nrSala(++contorSala)
 {
     this->nrLocuriSala = nrLocuriSala;
     this->nrLocuriOcupate = nrLocuriOcupate;
-    this->locuriOcupate = new int[nrLocuriOcupate];
+//    this->locuriOcupate = new int[nrLocuriOcupate];
     for(int i = 0; i<nrLocuriOcupate; i++)
         this->locuriOcupate[i] = locuriOcupate[i];
     this->dimensiuneSala.lungime = dimensiuneSala.lungime;
     this->dimensiuneSala.latime = dimensiuneSala.latime;
 }
 
-Sala::Sala(int nrLocuriSala, dimensiune dimensiuneSala):nrSala(contorSala++)
+Sala::Sala(int nrLocuriSala, dimensiune dimensiuneSala):nrSala(++contorSala)
 {
     this->nrLocuriSala = nrLocuriSala;
     nrLocuriOcupate = 0;
-    locuriOcupate = NULL;
+    locuriOcupate[0] = NULL;
     this->dimensiuneSala.lungime = dimensiuneSala.lungime;
     this->dimensiuneSala.latime = dimensiuneSala.lungime;
 }
 
-Sala::Sala(int nrLocuriSala, int nrLocuriOcupate):nrSala(contorSala++)
+Sala::Sala(int nrLocuriSala, int nrLocuriOcupate):nrSala(++contorSala)
 {
     this->nrLocuriSala = nrLocuriSala;
     this->nrLocuriOcupate = nrLocuriOcupate;
-    locuriOcupate = NULL;
+    locuriOcupate[0] = NULL;
     dimensiuneSala.lungime = 0;
     dimensiuneSala.latime = 0;
 }
 
-Sala::Sala(const Sala &obj):nrSala(contorSala++)
+Sala::Sala(const Sala &obj):nrSala(++contorSala)
 {
     this->nrLocuriSala = obj.nrLocuriSala;
     this->nrLocuriOcupate = obj.nrLocuriOcupate;
-    locuriOcupate = new int[obj.nrLocuriOcupate];
+//    locuriOcupate = new int[obj.nrLocuriOcupate];
     for(int i = 0; i<obj.nrLocuriOcupate; i++)
         this->locuriOcupate[i] = obj.locuriOcupate[i];
     this->dimensiuneSala.lungime = obj.dimensiuneSala.lungime;
@@ -685,13 +663,20 @@ Sala &Sala::operator =(const Sala &s)
     
     this->nrLocuriSala = s.nrLocuriSala;
     this->nrLocuriOcupate = s.nrLocuriOcupate;
-    locuriOcupate = new int[s.nrLocuriOcupate];
+//    locuriOcupate = new int[s.nrLocuriOcupate];
     for(int i = 0; i<s.nrLocuriOcupate; i++)
         this->locuriOcupate[i] = s.locuriOcupate[i];
     this->dimensiuneSala.lungime = s.dimensiuneSala.lungime;
     this->dimensiuneSala.latime = s.dimensiuneSala.latime;
     return *this;
 }
+
+//Sala &Sala::operator --()
+//{
+//    delete &this->locuriOcupate[this->nrLocuriOcupate];
+//    this->nrLocuriOcupate -= 1;
+//    return *this;
+//}
 
 istream &operator >> (istream &in, Sala &s)
 {
@@ -702,12 +687,12 @@ istream &operator >> (istream &in, Sala &s)
     if (s.nrLocuriOcupate != 0)
     {
         cout << "Care locuri sunt ocupate? ";
-        if (s.locuriOcupate != NULL)
-        {
-            delete [] s.locuriOcupate;
-            s.locuriOcupate = NULL;
-        }
-        s.locuriOcupate = new int[s.nrLocuriOcupate];
+//        if (s.locuriOcupate != NULL)
+//        {
+//            delete [] s.locuriOcupate;
+//            s.locuriOcupate = NULL;
+//        }
+//        s.locuriOcupate = new int[s.nrLocuriOcupate];
         for (int i=0; i<s.nrLocuriOcupate; i++)
             in >> s.locuriOcupate[i];
     }
@@ -716,7 +701,7 @@ istream &operator >> (istream &in, Sala &s)
     return in;
 }
 
-ostream &operator << (ostream &out, const Sala s)
+ostream &operator << (ostream &out, const Sala &s)
 {
     out << "Sala numarul " << s.nrSala << "." << endl;
     out << "Capacitatea salii este de " << s.nrLocuriSala << " locuri, iar dimensiunea ei este de " << s.dimensiuneSala.lungime << "X" << s.dimensiuneSala.latime << " metri." << endl;
@@ -731,20 +716,64 @@ ostream &operator << (ostream &out, const Sala s)
     return out;
 }
 
-Sala::~Sala()
-{
-    if(locuriOcupate != NULL)
-    {
-        delete [] locuriOcupate;
-        locuriOcupate = NULL;
-    }
-}
-
 int main()
 {
-    Sala U;
-    cin >> U;
-    cout << U;
+
+    Carte C[100];
+    for (int i = 0; i<= 2; i++)
+    {
+        cin >> C[i];
+        cout << endl;
+    }
+
+    Utilizator U[100];
+    for (int i = 0; i<= 2; i++)
+    {
+        cin >> U[i];
+        cout << endl;
+    }
+
+    Bibliotecar B[100];
+    for (int i = 0; i<= 2; i++)
+    {
+        cin >> B[i];
+        cout << endl;
+    }
+    Sala S[100];
+    for (int i = 0; i<= 2; i++)
+    {
+        cin >> S[i];
+        cout << endl;
+    }
+    cout << "Cartile: " << endl;
+    for (int i = 0; i<= 2; i++)
+    {
+        cout << C[i];
+        cout << endl;
+    }
+    cout << "Utilizatorii:" << endl;
+    for (int i = 0; i<= 2; i++)
+    {
+        cout << U[i];
+        cout << endl;
+    }
+    cout << "Bibliotecarii: " << endl;
+    for (int i = 0; i<= 2; i++)
+    {
+        cout << B[i];
+        cout << endl;
+    }
+    cout << "Salile: " << endl;
+    for (int i = 0; i<= 2; i++)
+    {
+        cout << S[i];
+        cout << endl;
+    }
+
+//    Sala B;
+
+//    cout << B;
+//cout << B;
 //    int a[] = {123, 13};
 //    char b[] = "0756927417";
 //    Utilizator U;
