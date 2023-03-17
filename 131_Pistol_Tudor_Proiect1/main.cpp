@@ -2,7 +2,6 @@
 #include <string.h>
 
 using namespace std;
-
 class Carte{
 private:
     const int idCarte;
@@ -11,15 +10,30 @@ private:
     char *autor;
     int anAparitie;
     bool status;
+    int idCititor;
 public:
 //constructors:
     Carte(); //constructorul fara parametri
-    Carte(string titlu, char *autor, int anAparitie, bool status); //constructorul cu toti parametrii
+    Carte(string titlu, char *autor, int anAparitie, bool status, int idCititor); //constructorul cu toti parametrii
     Carte(string titlu, char *autor);
     Carte(string titlu, char *autor, int anAparitie);
     Carte(const Carte &Obj); //copy-constructor
     ~Carte(); //destructor
 //operatori
+    Carte &operator + (int);
+    friend Carte operator + (int idCititor, Carte &c);
+    Carte &operator - (int);
+    Carte &operator ++ ();
+    Carte operator ++ (int);
+    Carte &operator -- ();
+    Carte operator -- (int);
+    bool operator == (const Carte &c);
+    bool operator < (const Carte &c);
+    bool operator <= (const Carte &c);
+    bool operator > (const Carte &c);
+    bool operator >= (const Carte &c);
+    operator string () {return this->titlu;}
+    operator int () {return this->idCarte;}
     Carte &operator = (const Carte &Obj); //forma incarcata a operatorului de atribuire
     friend istream &operator >> (istream &in, Carte &c); //supraincarcarea operatorului de citire
     friend ostream &operator << (ostream &out, const Carte &ca); //supraincarcarea operatorului de afisare
@@ -28,13 +42,15 @@ public:
     void setAutor(char *autor);
     void setAnAparitie(int anAparitie) {this->anAparitie = anAparitie;}
     void setStatus(bool status) {this->status = status;}
+    void setIdCititor(int idCititor) {this->idCititor = idCititor;}
 //getters
     const int getIdCarte() {return idCarte;}
     static int getContorIdCarte() {return contorIdCarte;}
-    string getTitlu() {return this->titlu;}
-    char *getAutor() {return this->autor;}
-    int getAnAparitie() {return this->anAparitie;}
-    bool getStatus() {return this->status;}
+    string getTitlu() {return titlu;}
+    const char *getAutor() const {return autor;}
+    int getAnAparitie() {return anAparitie;}
+    bool getStatus() {return status;}
+    int getIdCititor() {return idCititor;}
 };
 
 //corpul functiilor clasei Carte
@@ -47,15 +63,17 @@ Carte::Carte():idCarte(contorIdCarte++)
     strcpy(autor, "Necunoscut");
     anAparitie = NULL;
     status = false;
+    idCititor = -1;
 }
 
-Carte::Carte(string titlu, char *autor, int anAparitie, bool status):idCarte(contorIdCarte++)
+Carte::Carte(string titlu, char *autor, int anAparitie, bool status, int idCititor):idCarte(contorIdCarte++)
 {
     this->titlu = titlu;
     this->autor = new char[strlen(autor)+1];
     strcpy(this->autor, autor);
     this->anAparitie = anAparitie;
     this->status = status;
+    this->idCititor = idCititor;
 }
 
 Carte::Carte(string titlu, char *autor):idCarte(contorIdCarte++)
@@ -65,6 +83,7 @@ Carte::Carte(string titlu, char *autor):idCarte(contorIdCarte++)
     strcpy(this->autor, autor);
     anAparitie = NULL;
     status = false;
+    idCititor = -1;
 }
 
 Carte::Carte(string titlu, char *autor, int anAparitie):idCarte(contorIdCarte++)
@@ -74,6 +93,7 @@ Carte::Carte(string titlu, char *autor, int anAparitie):idCarte(contorIdCarte++)
     strcpy(this->autor, autor);
     this->anAparitie = anAparitie;
     status = false;
+    idCititor = -1;
 }
 
 Carte::Carte(const Carte &Obj):idCarte(contorIdCarte++)
@@ -83,6 +103,7 @@ Carte::Carte(const Carte &Obj):idCarte(contorIdCarte++)
     strcpy(this->autor, Obj.autor);
     this->anAparitie = Obj.anAparitie;
     this->status = Obj.status;
+    this->idCititor = Obj.idCititor;
 }
 
 Carte::~Carte()
@@ -108,6 +129,7 @@ Carte &Carte::operator = (const Carte &Obj)
         strcpy(this->autor, Obj.autor);
         this->anAparitie = Obj.anAparitie;
         this->status = Obj.status;
+        this->idCititor = Obj.idCititor;
     }
     return *this;
 }
@@ -118,8 +140,9 @@ ostream &operator << (ostream &out, const Carte &c)
     out << "Titlul cărții: " << c.titlu << endl;
     out<< "Autorul: " << c.autor << endl;
     out << "Anul publicării: " << c.anAparitie << endl;
-    if (c.status == 0) out << "Împrumutată" << endl;
+    if (c.status == 0) out << "Împrumutată de cititorul cu ID-ul ";
     else out << "Disponibilă" << endl;
+    if (c.status == 0) out << c.idCititor << "." <<endl;
     return out;
 }
 
@@ -134,19 +157,34 @@ istream &operator >> (istream &in, Carte &ca)
     cout << "Cine este autorul? ";
     char aux2[100];
     in.getline(aux2, 100); //acelasi lucru ca la string
-    delete [] ca.autor;
+    if(ca.autor != NULL)
+    {
+        delete [] ca.autor;
+        ca.autor = NULL;
+    }
     ca.autor = new char [strlen(aux2)+1];
     strcpy(ca.autor, aux2);
     cout << "În ce an a fost publicată? ";
     in >> ca.anAparitie;
     cout << "Este disponibilă pentru împrumut?[0/1] ";
     in >> ca.status;
+    if (ca.status == 0)
+    {
+        cout << "Introduceti ID-ul cititorului care a imprumutat-o: ";
+        in >> ca.idCititor;
+        
+    }
     in.get(); //fac posibila urmatoarea citire pentru urmatorul obiect(citind enter-ul), in cazul unui vector de obiecte, altfel va considera tasta enter ca titlu pentru urmatoarea carte
     return in;
 }
 
 void Carte::setAutor(char *autor)
 {
+    if(this->autor != NULL)
+    {
+        delete [] this->autor;
+        this->autor = NULL;
+    }
     this->autor = new char[strlen(autor)+1];
     strcpy(this->autor, autor);
 }
@@ -166,27 +204,42 @@ private:
     char *numarTelefonic;
     int nrCartiImprumutate;
     int *idCartiImprumutate;
+    int aniAbonare;
 public:
 //constructori
     Utilizator();
-    Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii, char *numarTelefonic, int nrCartiImprumutate, int *idCartiImprumutate);
+    Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii, char *numarTelefonic, int nrCartiImprumutate, int *idCartiImprumutate, int aniAbonare);
     Utilizator(char numeUtilizator[20], char prenumeUtilizator[20]);
-    Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii);
+    Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii, char *numarTelefonic);
     Utilizator(const Utilizator &obj); //copy-constructor
     ~Utilizator(); //destructor
 //operatori
     Utilizator &operator = (const Utilizator &obj); //supraincarcare operator atribuire
+    Utilizator &operator ++(); //preincrementare
+    Utilizator operator ++(int); //postincrementare
+    Utilizator &operator +(int); //adunare la dreapta la idCartiImprumutate
+    Utilizator &operator -(int); //scadere la idCartiImprumutate
+    friend Utilizator operator +(int a, Utilizator &u); //adunare la stanga la idCartiImprumutate
+    int operator [] (int); //operator indexare
+    operator int(); //cast explicit
+    bool operator == (const Utilizator &u); //operator pt testare daca doi utilizatori au acelasi nume de familie
+    //operatori pt compararea numarului de carti imprumutate
+    bool operator > (const Utilizator &u);
+    bool operator >= (const Utilizator &u);
+    bool operator < (const Utilizator &u);
+    bool operator <= (const Utilizator &u);
     friend istream &operator >> (istream &in, Utilizator &u); //supraincarcare operator citire
     friend ostream &operator << (ostream &out, const Utilizator &u); //supraincarcare operator afisare
 //getteri
     const int getIdUtilizator() {return this->idUtilizator;}
-    char *getNumeUtilizator() {return this->numeUtilizator;}
-    char *getPrenumeUtilizator() {return this->prenumeUtilizator;}
-    char *getSexUtilizator() {return this->sexUtilizator;}
+    const char *getNumeUtilizator() const {return this->numeUtilizator;}
+    const char *getPrenumeUtilizator() const {return this->prenumeUtilizator;}
+    const char *getSexUtilizator() const {return this->sexUtilizator;}
     dataNasterii getDataNasterii() {return this->data_nasterii;}
-    char *getNumarTelefonic() {return this->numarTelefonic;}
+    const char *getNumarTelefonic() const {return this->numarTelefonic;}
     int getNrCartiImprumutate() {return this->nrCartiImprumutate;}
-    int *getIdCartiImprumutate() {return this->idCartiImprumutate;}
+    const int *getIdCartiImprumutate() const {return this->idCartiImprumutate;}
+    int getAniAbonare() {return aniAbonare;}
 //setteri
     void setNumeUtilizator(char numeUtilizator[30]) {strcpy(this->numeUtilizator, numeUtilizator);}
     void setPrenumeUtilizator(char prenumeUtilizator[30]) {strcpy(this->prenumeUtilizator, prenumeUtilizator);}
@@ -195,25 +248,29 @@ public:
     void setNumarTelelefonic(char *numarTelefonic);
     void setNrCartiImprumutate(int nrCartiImprumutate) {this->nrCartiImprumutate = nrCartiImprumutate;}
     void setIdCartiImprumutate(int *idCartiImprumutate);
+    void setAniAbonare(int aniAbonare) {this->aniAbonare = aniAbonare;}
+//metode
+
 };
 
 //corpul functiilor clasei Utilizator
 int Utilizator::contorIdUtilizator = 10000;
 Utilizator::Utilizator():idUtilizator(contorIdUtilizator++)
 {
-    strcpy(this->numeUtilizator, "Necunoscut");
-    strcpy(this->prenumeUtilizator, "Necunoscut");
-    strcpy(this->sexUtilizator, "X");
-    this->data_nasterii.zi = 0;
-    this->data_nasterii.luna = "0";
-    this->data_nasterii.an = 0;
-    this->numarTelefonic = new char [strlen("Necunoscut")+1];
-    strcpy(this->numarTelefonic, "Necunoscut");
-    this->nrCartiImprumutate = 0;
-    this->idCartiImprumutate = NULL;
+    strcpy(numeUtilizator, "Necunoscut");
+    strcpy(prenumeUtilizator, "Necunoscut");
+    strcpy(sexUtilizator, "X");
+    data_nasterii.zi = 0;
+    data_nasterii.luna = "0";
+    data_nasterii.an = 0;
+    numarTelefonic = new char [strlen("Necunoscut")+1];
+    strcpy(numarTelefonic, "Necunoscut");
+    nrCartiImprumutate = 0;
+    idCartiImprumutate = NULL;
+    aniAbonare = 0;
 }
 
-Utilizator::Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii, char *numarTelefonic, int nrCartiImprumutate, int *idCartiImprumutate):idUtilizator(contorIdUtilizator++)
+Utilizator::Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii, char *numarTelefonic, int nrCartiImprumutate, int *idCartiImprumutate, int aniAbonare):idUtilizator(contorIdUtilizator++)
 {
     strcpy(this->numeUtilizator, numeUtilizator);
     strcpy(this->prenumeUtilizator, prenumeUtilizator);
@@ -227,23 +284,25 @@ Utilizator::Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char
     this->idCartiImprumutate = new int[nrCartiImprumutate];
     for (int i = 0; i<nrCartiImprumutate; i++)
         this->idCartiImprumutate[i] = idCartiImprumutate[i];
+    this->aniAbonare = aniAbonare;
 }
 
 Utilizator::Utilizator(char numeUtilizator[20], char prenumeUtilizator[20]):idUtilizator(contorIdUtilizator++)
 {
     strcpy(this->numeUtilizator, numeUtilizator);
     strcpy(this->prenumeUtilizator, prenumeUtilizator);
-    strcpy(this->sexUtilizator, "X");
-    this->data_nasterii.zi = 0;
-    this->data_nasterii.luna = "0";
-    this->data_nasterii.an = 0;
-    this->numarTelefonic = new char [strlen("Necunoscut")+1];
-    strcpy(this->numarTelefonic, "Necunoscut");
-    this->nrCartiImprumutate = 0;
-    this->idCartiImprumutate = NULL;
+    strcpy(sexUtilizator, "X");
+    data_nasterii.zi = 0;
+    data_nasterii.luna = "0";
+    data_nasterii.an = 0;
+    numarTelefonic = new char [strlen("Necunoscut")+1];
+    strcpy(numarTelefonic, "Necunoscut");
+    nrCartiImprumutate = 0;
+    idCartiImprumutate = NULL;
+    aniAbonare = 0;
 }
 
-Utilizator::Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii):idUtilizator(contorIdUtilizator++)
+Utilizator::Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char sexUtilizator[2], dataNasterii data_nasterii, char *numarTelefonic):idUtilizator(contorIdUtilizator++)
 {
     strcpy(this->numeUtilizator, numeUtilizator);
     strcpy(this->prenumeUtilizator, prenumeUtilizator);
@@ -251,10 +310,11 @@ Utilizator::Utilizator(char numeUtilizator[20], char prenumeUtilizator[20], char
     this->data_nasterii.zi = data_nasterii.zi;
     this->data_nasterii.luna = data_nasterii.luna;
     this->data_nasterii.an = data_nasterii.an;
-    this->numarTelefonic = new char [strlen("Necunoscut")+1];
-    strcpy(this->numarTelefonic, "Necunoscut");
-    this->nrCartiImprumutate = 0;
-    this->idCartiImprumutate = NULL;
+    this->numarTelefonic = new char [strlen(numarTelefonic)+1];
+    strcpy(this->numarTelefonic, numarTelefonic);
+    nrCartiImprumutate = 0;
+    idCartiImprumutate = NULL;
+    aniAbonare = 0;
 }
 
 Utilizator::Utilizator(const Utilizator &obj):idUtilizator(contorIdUtilizator++)
@@ -271,6 +331,7 @@ Utilizator::Utilizator(const Utilizator &obj):idUtilizator(contorIdUtilizator++)
     this->idCartiImprumutate = new int[obj.nrCartiImprumutate];
     for (int i = 0; i<obj.nrCartiImprumutate; i++)
         this->idCartiImprumutate[i] = obj.idCartiImprumutate[i];
+    this->aniAbonare = obj.aniAbonare;
 }
 
 Utilizator::~Utilizator()
@@ -311,6 +372,7 @@ Utilizator &Utilizator::operator = (const Utilizator &obj)
     this->idCartiImprumutate = new int[obj.nrCartiImprumutate];
     for (int i = 0; i<obj.nrCartiImprumutate; i++)
         this->idCartiImprumutate[i] = obj.idCartiImprumutate[i];
+    this->aniAbonare = obj.aniAbonare;
     return *this;
 }
 
@@ -337,6 +399,8 @@ istream &operator >> (istream &in, Utilizator &u)
     cout << "Introduceți, pe rând, ID-ul fiecărei cărți împrumutate: ";
     for (int i = 0; i < u.nrCartiImprumutate; i++)
         in >> u.idCartiImprumutate[i];
+    cout << "Cati ani are de cand utilizatorul este abonat la biblioteca? ";
+    in >> u.aniAbonare;
     in.get();
     return in;
 }
@@ -354,6 +418,7 @@ ostream &operator << (ostream &out, const Utilizator &u)
     {
         out << "* Cartea numarul " << i+1 << ":" << u.idCartiImprumutate[i] << endl;
     }
+    cout << u.numeUtilizator << " " << u.prenumeUtilizator << " este inregistrat la aceasta biblioteca de " << u.aniAbonare << " ani.";
     return out;
 }
 
@@ -387,6 +452,130 @@ void Utilizator::setIdCartiImprumutate(int *idCartiImprumutate)
         this->idCartiImprumutate[i] = idCartiImprumutate[i];
 }
 
+Utilizator &Utilizator::operator -(int idCarte)
+{
+    if(this->idCartiImprumutate == NULL)
+     throw runtime_error("Utilizatorul nu are carti imprumutate.");
+    else
+    {
+        for (int i = 0; i<this->nrCartiImprumutate; i++)
+        {
+            if(this->idCartiImprumutate[i] == idCarte)
+            {
+                swap(this->idCartiImprumutate[i], this->idCartiImprumutate[this->nrCartiImprumutate-1]);
+                break;
+            }
+        }
+        this->nrCartiImprumutate--;
+        int *aux;
+        aux = new int[this->nrCartiImprumutate];
+        for(int i = 0; i<this->nrCartiImprumutate; i++)
+            aux[i] = this->idCartiImprumutate[i];
+        delete [] this->idCartiImprumutate;
+        this->idCartiImprumutate = new int[this->nrCartiImprumutate];
+        for(int i = 0; i<this->nrCartiImprumutate; i++)
+            this->idCartiImprumutate[i] = aux[i];
+        delete [] aux;
+        aux = NULL;
+        return *this;
+    }
+}
+
+Utilizator& Utilizator::operator ++()
+{
+    this->aniAbonare++;
+    return *this;
+}
+
+Utilizator Utilizator::operator ++(int)
+{
+    Utilizator aux(*this);
+    this->aniAbonare++;
+    return aux;
+}
+
+Utilizator &Utilizator::operator +(int idCarte)
+{
+    this->nrCartiImprumutate++;
+    int *aux;
+    aux = new int[this->nrCartiImprumutate];
+    for(int i = 0; i<this->nrCartiImprumutate-1; i++)
+        aux[i] = this->idCartiImprumutate[i];
+    aux[this->nrCartiImprumutate-1] = idCarte;
+    delete [] this->idCartiImprumutate;
+    this->idCartiImprumutate = new int[this->nrCartiImprumutate];
+    for(int i = 0; i<this->nrCartiImprumutate; i++)
+        this->idCartiImprumutate[i] = aux[i];
+    delete [] aux;
+    aux = NULL;
+    return *this;
+}
+
+Utilizator operator +(int a, Utilizator &u)
+{
+    u.nrCartiImprumutate++;
+    int *aux;
+    aux = new int[u.nrCartiImprumutate];
+    for (int i = 0; i<u.nrCartiImprumutate-1; i++)
+        aux[i] = u.idCartiImprumutate[i];
+    delete [] u.idCartiImprumutate;
+    u.idCartiImprumutate = new int[u.nrCartiImprumutate];
+    aux[u.nrCartiImprumutate-1] = a;
+    for (int i = 0; i<u.nrCartiImprumutate; i++)
+        u.idCartiImprumutate[i] = aux[i];
+    delete[] aux;
+    aux = NULL;
+    return u;
+}
+
+int Utilizator::operator [](int a)
+{
+    if(this->nrCartiImprumutate == 0)
+        throw runtime_error("Utilizatorul nu are carti imprumutate.");
+    else if(a<0 || a>this->nrCartiImprumutate)
+        throw runtime_error("Index invalid!");
+    else
+        return this->idCartiImprumutate[a];
+}
+
+Utilizator::operator int()
+{
+    return this->idUtilizator;
+}
+
+bool Utilizator::operator == (const Utilizator &u)
+{
+    return this->nrCartiImprumutate == u.nrCartiImprumutate;
+}
+
+bool Utilizator::operator > (const Utilizator &u)
+{
+    if (this->nrCartiImprumutate > u.nrCartiImprumutate)
+        return true;
+    else return false;
+}
+
+bool Utilizator::operator >= (const Utilizator &u)
+{
+    if (this->nrCartiImprumutate >= u.nrCartiImprumutate)
+        return true;
+    else return false;
+}
+
+bool Utilizator::operator < (const Utilizator &u)
+{
+    if (this->nrCartiImprumutate < u.nrCartiImprumutate)
+        return true;
+    else return false;
+}
+
+bool Utilizator::operator <= (const Utilizator &u)
+{
+    if (this->nrCartiImprumutate <= u.nrCartiImprumutate)
+        return true;
+    else return false;
+}
+
 class Bibliotecar{
 private:
     const int idBibliotecar;
@@ -405,6 +594,8 @@ private:
 public:
     float getVenitLunar() {return this->venitLunar;}
     void setVenitLunar(float venitLunar) {this->venitLunar = venitLunar;}
+    void setVarstaBibliotecar(int varstaBibliotecar) {this->varstaBibliotecar = varstaBibliotecar;}
+    int getVarstaBibliotecar() {return this->varstaBibliotecar;}
 //constructori
     Bibliotecar();
     Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, int varstaBibliotecar, float venitLunar, dataAngajarii data_angajarii, int nrZileLucruSaptamanal, char programSaptamanal[7][50]);
@@ -413,9 +604,21 @@ public:
     Bibliotecar(const Bibliotecar &obj); //copy-constructor
     ~Bibliotecar();
 //operatori
-    Bibliotecar &operator =(const Bibliotecar &obj);
-    friend istream &operator >> (istream &in, Bibliotecar &b);
-    friend ostream &operator << (ostream &out, const Bibliotecar &b);
+    char const * operator [] (int); //operator indexare program
+    Bibliotecar &operator ++ (); //operator preincrementare ani
+    Bibliotecar operator ++ (int); //operator postincrementare ani
+    Bibliotecar &operator + (double venit); //adunare la dreapta
+    friend Bibliotecar operator + (double venit, Bibliotecar &b); //adunare la stanga
+    Bibliotecar &operator - (double venit); //marire/micsorare venit
+    operator float () {return venitLunar;} //cast explicit
+    bool operator == (const Bibliotecar &b);
+    bool operator > (const Bibliotecar &b);
+    bool operator >= (const Bibliotecar &b);
+    bool operator < (const Bibliotecar &b);
+    bool operator <= (const Bibliotecar &b);
+    Bibliotecar &operator =(const Bibliotecar &obj); //operator atribuie
+    friend istream &operator >> (istream &in, Bibliotecar &b); //operator citire
+    friend ostream &operator << (ostream &out, const Bibliotecar &b); //operator afisare
 };
 
 int Bibliotecar::contorIdBibliotecar = 100;
@@ -432,7 +635,7 @@ Bibliotecar::Bibliotecar():idBibliotecar(contorIdBibliotecar++)
     this->data_angajarii.luna = 0;
     this->data_angajarii.an = 0;
     this->nrZileLucruSaptamanal = 0;
-    strcpy(this->programSaptamanal[0], "Necunoscut");
+    strcpy(this->programSaptamanal[0], "Nu are program.");
 }
 
 Bibliotecar::Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, int varstaBibliotecar, float venitLunar, dataAngajarii data_angajarii, int nrZileLucruSaptamanal, char programSaptamanal[7][50]):idBibliotecar(contorIdBibliotecar++)
@@ -509,6 +712,79 @@ Bibliotecar::~Bibliotecar()
         delete [] this->prenumeBibliotecar;
         this->prenumeBibliotecar = NULL;
     }
+}
+
+char const * Bibliotecar::operator [] (int a)
+{
+    if(a<0 || a>nrZileLucruSaptamanal)
+        throw runtime_error("Index invalid.");
+    else return this->programSaptamanal[a];
+}
+
+Bibliotecar& Bibliotecar::operator ++ ()
+{
+    this->varstaBibliotecar++;
+    return *this;
+}
+
+Bibliotecar Bibliotecar::operator ++ (int a)
+{
+    Bibliotecar aux(*this);
+    this->varstaBibliotecar++;
+    return aux;
+}
+
+Bibliotecar& Bibliotecar::operator + (double venit)
+{
+    this->venitLunar += venit;
+    return *this;
+}
+
+Bibliotecar operator + (double venit, Bibliotecar &b)
+{
+    b.venitLunar += venit;
+    return b;
+}
+
+Bibliotecar& Bibliotecar::operator - (double venit)
+{
+    this->venitLunar -= venit;
+    return *this;
+}
+
+bool Bibliotecar::operator == (const Bibliotecar &b)
+{
+    if(this->venitLunar == b.venitLunar)
+        return true;
+    else return false;
+}
+
+bool Bibliotecar::operator < (const Bibliotecar &b)
+{
+    if(this->venitLunar < b.venitLunar)
+        return true;
+    else return false;
+}
+
+bool Bibliotecar::operator <= (const Bibliotecar &b)
+{
+    if(this->venitLunar <= b.venitLunar)
+        return true;
+    else return false;
+}
+
+bool Bibliotecar::operator > (const Bibliotecar &b)
+{
+    if(this->venitLunar == b.venitLunar)
+        return true;
+    else return false;
+}
+
+bool Bibliotecar::operator >= (const Bibliotecar &b)
+{
+    if(this->venitLunar == b.venitLunar)
+        return true;
+    else return false;
 }
 
 Bibliotecar &Bibliotecar::operator =(const Bibliotecar &obj)
@@ -718,82 +994,39 @@ ostream &operator << (ostream &out, const Sala &s)
 
 int main()
 {
-//teste
-//    Carte C[100];
-//    for (int i = 0; i<= 2; i++)
-//    {
-//        cin >> C[i];
-//        cout << endl;
-//    }
-//
-//    Utilizator U[100];
-//    for (int i = 0; i<= 2; i++)
-//    {
-//        cin >> U[i];
-//        cout << endl;
-//    }
-//
-//    Bibliotecar B[100];
-//    for (int i = 0; i<= 2; i++)
-//    {
-//        cin >> B[i];
-//        cout << endl;
-//    }
-//    Sala S[100];
-//    for (int i = 0; i<= 2; i++)
-//    {
-//        cin >> S[i];
-//        cout << endl;
-//    }
-//    cout << "Cartile: " << endl;
-//    for (int i = 0; i<= 2; i++)
-//    {
-//        cout << C[i];
-//        cout << endl;
-//    }
-//    cout << "Utilizatorii:" << endl;
-//    for (int i = 0; i<= 2; i++)
-//    {
-//        cout << U[i];
-//        cout << endl;
-//    }
-//    cout << "Bibliotecarii: " << endl;
-//    for (int i = 0; i<= 2; i++)
-//    {
-//        cout << B[i];
-//        cout << endl;
-//    }
-//    cout << "Salile: " << endl;
-//    for (int i = 0; i<= 2; i++)
-//    {
-//        cout << S[i];
-//        cout << endl;
-//    }
+    Carte b1, b2, b3;
+    cin>> b1;
+    cout << b1;
+    //cout << 500.6 +b1 ;
+    //b1-10.0;
+    //cout << b1;
 
-//    Sala B;
-
-//    cout << B;
-//cout << B;
-//    int a[] = {123, 13};
-//    char b[] = "0756927417";
-//    Utilizator U;
-//    U.setNrCartiImprumutate(2);
-//    U.setIdCartiImprumutate(a);
-//    U.setNumarTelelefonic(b);
-//    char nume[] = "pistol";
-//    char prenume[] = "tudor";
-//    char sex[] = "M";
-//    char nr[] = "0756927417";
-//    Utilizator c(nume, prenume, sex, {31, "mai", 2003}, nr, 2, a);
-//    Utilizator U;
-//    cin >> U;
+    
+//    U-2003;
 //    cout << U;
-//    cout<<c.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c.getSexUtilizator()<<endl<<c.getDataNasterii().zi<<endl<<c.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c.getNumarTelefonic()<<endl<<c.getNrCartiImprumutate()<<endl;
-//    cout<<c3.getNumeUtilizator()<<endl<<c3.getPrenumeUtilizator()<<endl<<c3.getSexUtilizator()<<endl<<c3.getDataNasterii().zi<<endl<<c3.getDataNasterii().luna<<endl<<c.getDataNasterii().an<<endl<<c3.getNumarTelefonic()<<endl<<c3.getNrCartiImprumutate()<<endl;
-//    for(int i = 0; i<c3.getNrCartiImprumutate();i++)
-//        cout<<c3.getIdCartiImprumutate()[i]<<endl;
-//
-//    cout<<c1.getNumeUtilizator()<<endl<<c.getPrenumeUtilizator()<<endl<<c1.getSexUtilizator()<<endl<<c1.getDataNasterii().zi<<endl<<c1.getDataNasterii().luna<<endl<<c1.getDataNasterii().an<<endl<<c1.getNumarTelefonic()<<endl<<c1.getNrCartiImprumutate()<<endl;
-//    for(int i = 0; i<c1.getNrCartiImprumutate();i++)
-//        cout<<c1.getIdCartiImprumutate()[i]<<endl;
+//    //carti
+//    char c0[] = "Thomas Mann";
+//    char c1[] = "Franz Kafka";
+//    char c2[] = "Albert Camus";
+//    char c3[] = "Fernando Pessoa";
+//    char c4[] = "Gabriel Garcia Marquez";
+//    char c5[] = "F. M. Dostoievski";
+//    char c6[] = "Nikolai Gogol";
+//    char c7[] = "Max L. Blecher";
+//    char c8[] = "Liviu Rebreanu";
+//    char c9[] = "Nichita Stanescu";
+//    Carte C0("Moarte la Venetia", c0, 1912, 1);
+//    Carte C1("Procesul", c1, 1925, 1);
+//    Carte C2("Ciuma", c2, 1947, 1);
+//    Carte C3("Cartea nelinistirii", c3, 1982, 1);
+//    Carte C4("Un veac de singuratate", c4, 1967, 1);
+//    Carte C5("Fratii Karamazov", c5, 1880, 1);
+//    Carte C6("Povestiri din Petersburg", c6, 1842, 1);
+//    Carte C7("Inimi cicatricate", c7, 1937, 1);
+//    Carte C8("Ciuleandra", c8, 1927, 1);
+//    Carte C9("Opera Magna", c9, 1965, 1);
+//    Utilizator U0("Pistol", "Tudor", "M", {31, "mai", 2003}, "+40756927417");
+//    Utilizator U1("Obada", "Iustina", "F", {7, "decembrie", 2003}, "+4073411319");
+//    Utilizator U2("Pistol", "David", "M", {27, "iunie", 2007}, "+40756927233");
+//    Utilizator U3("Raspopa", "Monica", "F", {2, "februarie", 1980}, "+40756925674");
 }

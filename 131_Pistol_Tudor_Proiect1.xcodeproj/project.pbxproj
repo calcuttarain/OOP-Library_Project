@@ -23,6 +23,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F92AB0B229C0B423008FA9A2 /* baza_date_carti */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_carti; sourceTree = "<group>"; };
+		F92AB0B329C0B436008FA9A2 /* baza_date_utilizatori */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_utilizatori; sourceTree = "<group>"; };
+		F92AB0B429C0BADD008FA9A2 /* baza_date_bibliotecari.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_bibliotecari.txt; sourceTree = "<group>"; };
+		F92AB0B529C0BAFC008FA9A2 /* baza_date_sali.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_sali.txt; sourceTree = "<group>"; };
 		F9DEE80C29B68F5600A65736 /* 131_Pistol_Tudor_Proiect1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = 131_Pistol_Tudor_Proiect1; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9DEE80F29B68F5600A65736 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,6 +62,10 @@
 			isa = PBXGroup;
 			children = (
 				F9DEE80F29B68F5600A65736 /* main.cpp */,
+				F92AB0B429C0BADD008FA9A2 /* baza_date_bibliotecari.txt */,
+				F92AB0B529C0BAFC008FA9A2 /* baza_date_sali.txt */,
+				F92AB0B229C0B423008FA9A2 /* baza_date_carti */,
+				F92AB0B329C0B436008FA9A2 /* baza_date_utilizatori */,
 			);
 			path = 131_Pistol_Tudor_Proiect1;
 			sourceTree = "<group>";
