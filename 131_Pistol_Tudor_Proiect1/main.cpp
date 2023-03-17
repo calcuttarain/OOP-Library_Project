@@ -1005,7 +1005,7 @@ int main()
 //    U-2003;
 //    cout << U;
 //    //carti
-//    char c0[] = "Thomas Mann";
+//    char c0[] = "Thomas Mann";;
 //    char c1[] = "Franz Kafka";
 //    char c2[] = "Albert Camus";
 //    char c3[] = "Fernando Pessoa";
