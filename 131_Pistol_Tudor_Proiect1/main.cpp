@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+#include <stdlib.h>
 using namespace std;
 
 class Carte{
@@ -236,6 +237,7 @@ ostream &operator << (ostream &out, const Carte &c)
 
 istream &operator >> (istream &in, Carte &ca)
 {
+    in.get();
     cout << "Care este titlul cărții? ";
     //aloc spatiu random
     char aux1[100];
@@ -466,6 +468,7 @@ Utilizator &Utilizator::operator = (const Utilizator &obj)
 
 istream &operator >> (istream &in, Utilizator &u)
 {
+    in.get();
     cout  << "Nume utilizator: ";
     in.getline(u.numeUtilizator, 20);
     cout  << "Prenume utilizator: ";
@@ -484,9 +487,12 @@ istream &operator >> (istream &in, Utilizator &u)
     in >> u.nrCartiImprumutate;
     delete [] u.idCartiImprumutate;
     u.idCartiImprumutate = new int[u.nrCartiImprumutate];
-    cout << "Introduceți, pe rând, ID-ul fiecărei cărți împrumutate: ";
-    for (int i = 0; i < u.nrCartiImprumutate; i++)
-        in >> u.idCartiImprumutate[i];
+    if(u.nrCartiImprumutate != 0)
+    {
+        cout << "Introduceți, pe rând, ID-ul fiecărei cărți împrumutate: ";
+        for (int i = 0; i < u.nrCartiImprumutate; i++)
+            in >> u.idCartiImprumutate[i];
+    }
     cout << "Cati ani are de cand utilizatorul este abonat la biblioteca? ";
     in >> u.aniAbonare;
     in.get();
@@ -684,6 +690,9 @@ public:
     void setVenitLunar(float venitLunar) {this->venitLunar = venitLunar;}
     void setVarstaBibliotecar(int varstaBibliotecar) {this->varstaBibliotecar = varstaBibliotecar;}
     int getVarstaBibliotecar() {return this->varstaBibliotecar;}
+    const char* getNumeBibliotecar() const {return numeBibliotecar;}
+    const char* getPrenumeBibliotecar() const {return prenumeBibliotecar;}
+    dataAngajarii getDataAngajarii () {return data_angajarii;}
 //constructori
     Bibliotecar();
     Bibliotecar(char *numeBibliotecar, char *prenumeBibliotecar, int varstaBibliotecar, float venitLunar, dataAngajarii data_angajarii, int nrZileLucruSaptamanal, char programSaptamanal[7][50]);
@@ -699,6 +708,7 @@ public:
     friend Bibliotecar operator + (double venit, Bibliotecar &b); //adunare la stanga
     Bibliotecar &operator - (double venit); //marire/micsorare venit
     operator float () {return venitLunar;} //cast explicit
+    operator int () {return idBibliotecar;}
     bool operator == (const Bibliotecar &b);
     bool operator > (const Bibliotecar &b);
     bool operator >= (const Bibliotecar &b);
@@ -894,6 +904,7 @@ Bibliotecar &Bibliotecar::operator =(const Bibliotecar &obj)
 
 istream &operator >> (istream &in, Bibliotecar &b)
 {
+    in.get();
     cout << "Introduceti numele bibliotecarului: ";
     char auxb1[20];
     in.getline(auxb1, 20);
@@ -967,7 +978,7 @@ public:
     Sala &operator -- ();
     Sala operator -- (int);
     int operator [] (int);
-    operator int() {return this->nrLocuriOcupate;}
+    operator int() {return this->nrLocuriSala;}
     bool operator == (Sala &s);
     bool operator > (Sala &s);
     bool operator >= (Sala &s);
@@ -975,6 +986,10 @@ public:
     bool operator < (Sala &s);
     friend istream &operator >> (istream &in, Sala &s);
     friend ostream &operator << (ostream &out, const Sala &s);
+    friend int operator + (const Sala s, const Utilizator u);
+    friend int operator + (const Utilizator u, const Sala s); //adunare intre doua clase
+    int getNrLocuriOcupate () {return nrLocuriOcupate;}
+    int getNrSala () {return nrSala;}
 };
 
 int Sala::contorSala = 0;
@@ -1196,6 +1211,7 @@ bool Sala::operator >= (Sala &s)
 
 istream &operator >> (istream &in, Sala &s)
 {
+    in.get();
     cout << "Introduceti numarul de locuri al salii: ";
     in >> s.nrLocuriSala;
     cout << "Cate locuri sunt ocupate acum? ";
@@ -1232,45 +1248,637 @@ ostream &operator << (ostream &out, const Sala &s)
     return out;
 }
 
+int operator + (const Sala s, const Utilizator u) {int aux; aux = s.nrLocuriOcupate; return aux++;}
+
+int operator + (const Utilizator u, const Sala s) {int aux; aux = s.nrLocuriOcupate; return aux++;}
+
 int main()
 {
-//    Utilizator b1, b2, b3;
-//    cin >> b1;
-//    cout << b1;
-    //cout << 500.6 +b1 ;
-    //b1-10.0;
-    //cout << b1;
-    Sala S;
-    cin >> S;
-    //S = S + 34;
-    cout << S[3];
-    
-//    U-2003;
-//    cout << U;
-//    //carti
-//    char c0[] = "Thomas Mann";;
-//    char c1[] = "Franz Kafka";
-//    char c2[] = "Albert Camus";
-//    char c3[] = "Fernando Pessoa";
-//    char c4[] = "Gabriel Garcia Marquez";
-//    char c5[] = "F. M. Dostoievski";
-//    char c6[] = "Nikolai Gogol";
-//    char c7[] = "Max L. Blecher";
-//    char c8[] = "Liviu Rebreanu";
-//    char c9[] = "Nichita Stanescu";
-//    Carte C0("Moarte la Venetia", c0, 1912, 1, 0);
-//    Carte C1("Procesul", c1, 1925, 1, 0);
-//    C1 =C1 - 34;
-//    Carte C2("Ciuma", c2, 1947, 1);
-//    Carte C3("Cartea nelinistirii", c3, 1982, 1);
-//    Carte C4("Un veac de singuratate", c4, 1967, 1);
-//    Carte C5("Fratii Karamazov", c5, 1880, 1);
-//    Carte C6("Povestiri din Petersburg", c6, 1842, 1);
-//    Carte C7("Inimi cicatricate", c7, 1937, 1);
-//    Carte C8("Ciuleandra", c8, 1927, 1);
-//    Carte C9("Opera Magna", c9, 1965, 1);
-//    Utilizator U0("Pistol", "Tudor", "M", {31, "mai", 2003}, "+40756927417");
-//    Utilizator U1("Obada", "Iustina", "F", {7, "decembrie", 2003}, "+4073411319");
-//    Utilizator U2("Pistol", "David", "M", {27, "iunie", 2007}, "+40756927233");
-//    Utilizator U3("Raspopa", "Monica", "F", {2, "februarie", 1980}, "+40756925674");
+    int ok = 1, cc = 0, cu = 0, cb = 0, cs = 0;
+    Carte vectorCarti[100];
+    Utilizator vectorUtilizatori[100];
+    Bibliotecar vectorBibliotecari[100];
+    Sala vectorSali[100];
+    while (ok == 1)
+    {
+        int comanda;
+        cout << "\t\t\tMeniu principal\n\n";
+        cout << "\t1-Inregistrare carte noua" << endl;
+        cout << "\t2-Inregistrare utilizator nou" << endl;
+        cout << "\t3-Inregistrare bibliotecar nou" << endl;
+        cout << "\t4-Inregistrare sala noua" << endl;
+        cout << "\t5-Informatii carti" << endl;
+        cout << "\t6-Informatii utilizatori" << endl;
+        cout << "\t7-Informatii bibliotecari" << endl;
+        cout << "\t8-Informatii sali" << endl;
+        cout << "\t9-Meniu editare carti" << endl;
+        cout << "\t10-Meniu editare utilizatori" << endl;
+        cout << "\t11-Meniu editare bibliotecari" << endl;
+        cout << "\t12-Meniu editare sali" << endl;
+        cout << "\t13-Stergere carte" << endl;
+        cout << "\t14-Stergere utilizator" << endl;
+        cout << "\t15-Stergere bibliotecar" << endl;
+        cout << "\t16-Stergere sala" << endl;
+        cout << "\t17-Iesire" << endl;
+        cin >> comanda;
+        switch(comanda)
+        {
+            case 1:{
+                Carte C;
+                cin >> C;
+                vectorCarti[cc] = C;
+                cc++;
+                system("cls");
+                break;
+            }
+            case 2:{
+                Utilizator U;
+                cin >> U;
+                vectorUtilizatori[cu] = U;
+                cu++;
+                system("cls");
+                break;
+            }
+            case 3:{
+                Bibliotecar B;
+                cin >> B;
+                vectorBibliotecari[cb] = B;
+                cb++;
+                system("cls");
+                break;
+            }
+            case 4:{
+                Sala S;
+                cin >> S;
+                vectorSali[cs] = S;
+                cs++;
+                system("cls");
+                break;
+            }
+            case 5:{
+                int ok1 = 1;
+                while (ok1 == 1)
+                {
+                    cout << "\t\t\tInformatii carti\n\n";
+                    cout << "\t1-Gasiti o carte dupa ID\n";
+                    cout << "\t2-Gasiti o carte dupa titlu\n";
+                    cout << "\t3-Vizualizati cartile disponibile pentru imprumut\n"; //functionalitate
+                    cout << "\t4-Inapoi la meniul principal\n";
+                    int comanda1;
+                    cin >> comanda1;
+                    switch (comanda1){
+                        case 1:{
+                            cout << "\nIntroduceti ID-ul cartii cautate: ";
+                            int id;
+                            cin >> id;
+                            int k = 0;
+                            for(int i = 0; i<cc; i++)
+                                if(vectorCarti[i].getIdCarte() == id)
+                                {
+                                    cout << vectorCarti[i];
+                                    k = 1;
+                                    break;
+                                }
+                            if(k == 0) cout << "\nID invalid!";
+                            system("cls");
+                            break;
+                        }
+                        case 2:{
+                            cout << "\nIntroduceti titlul cartii cautate: ";
+                            string titlu;
+                            cin >> titlu;
+                            int k = 0;
+                            for(int i = 0; i<cc; i++)
+                                if(vectorCarti[i].getTitlu() == titlu)
+                                {
+                                    cout << vectorCarti[i];
+                                    k = 1;
+                                    break;
+                                }
+                            if(k == 0) cout << "\nAcest titlu nu exista!";
+                            system("cls");
+                            break;
+                        }
+                        case 3:{
+                            int k = 0;
+                            for(int i = 0; i<cc; i++)
+                                if(vectorCarti[i].getStatus() == 1)
+                                {
+                                    cout << vectorCarti[i] << endl;
+                                    k = 1;
+                                }
+                            if (k == 0) cout << "Nu exista carti disponibile!";
+                            system("cls");
+                            break;
+                        }
+                        case 4:{
+                            ok1 = 0;
+                            break;
+                        }
+                        default:{
+                            cout << "Comanda nerecunoscuta!";
+                            system("cls");
+                            break;
+                        }
+                    }
+                }
+                system("cls");
+                break;
+            }
+            case 6:{
+                int ok2 = 1;
+                while (ok2 != 0)
+                {
+                    cout << "\t\t\tInformatii utilizatori\n\n";
+                    cout << "\t1-Cautati utilizator dupa ID\n";
+                    cout << "\t2-Cautati utilizatori dupa numele de familie\n";
+                    cout << "\t3-Cautati utilizatori dupa numele complet\n";
+                    cout << "\t4-Verificati daca este la sala de lectura\n"; //functionalitate
+                    cout << "\t5-Inapoi la meniul principal\n";
+                    int comand2;
+                    cin >> comand2;
+                    switch (comand2){
+                        case 1:{
+                            int k = 0, id;
+                            cout << "Introduceti ID-ul utilizatorului cautat: ";
+                            cin >> id;
+                            for(int i = 0; i<cu; i++)
+                                if(vectorUtilizatori[i].getIdUtilizator() == id)
+                                {
+                                    cout << vectorUtilizatori[i];
+                                    k = 1;
+                                    break;
+                                }
+                            if (k == 0) cout << "ID invalid!\n";
+                            system("cls");
+                            break;
+                        }
+                        case 2:{
+                            cin.get();
+                            int k = 0;
+                            char nume[20];
+                            cout << "Introduceti numele de familie al utilizatorului cautat: ";
+                            cin.getline(nume, 20);
+                            for(int i = 0; i<cu; i++)
+                                if(strcmp(vectorUtilizatori[i].getNumeUtilizator(), nume) == 0)
+                                {
+                                    cout << vectorUtilizatori[i];
+                                    k = 1;
+                                    break;
+                                }
+                            if (k == 0) cout << "Nume neinregistrat!\n";
+                            system("cls");
+                            break;
+                        }
+                        case 3:{
+                            cin.get();
+                            int k = 0;
+                            char nume[20], prenume[20];
+                            cout << "Introduceti numele de familie al utilizatorului cautat: " << endl;
+                            cin.getline(nume, 20);
+                            cout << "Introduceti prenumele utilizatorului cautat: " << endl;
+                            cin.getline(prenume, 20);
+                            for(int i = 0; i<cu; i++)
+                                if(strcmp(vectorUtilizatori[i].getNumeUtilizator(), nume) == 0 && strcmp(vectorUtilizatori[i].getPrenumeUtilizator(), prenume) == 0)
+                                {
+                                    cout << vectorUtilizatori[i];
+                                    k = 1;
+                                    break;
+                                }
+                            if (k == 0) cout << "Utilizator neinregistrat!\n";
+                            system("cls");
+                            break;
+                        }
+                        case 4:{
+                            cout << "Introduceti ID-ul utilizatorului: ";
+                            int id, k = 0;
+                            cin >> id;
+                            for (int i = 0; i<cs; i++)
+                                for(int j = 0; j<vectorSali[i].getNrLocuriOcupate(); j++)
+                                    if (vectorSali[i][j] == id)
+                                    {
+                                        cout << "Utilizatorul se afla la sala numarul " << vectorSali[i].getNrSala();
+                                        k = 1;
+                                        break;
+                                    }
+                            if(k == 0) cout << "Utilizatorul nu se afla la sala de lectura";
+                            system("cls");
+                            break;
+                        }
+                        case 5:{
+                            ok2 = 0;
+                            break;
+                        }
+                        default:{
+                            cout << "Comanda invalida!";
+                        }
+                    }
+                }
+                system("cls");
+                break;
+            }
+            case 7:{
+                int ok3 = 1;
+                while (ok3 == 1)
+                {
+                    cout << "\t\t\tInformatii Bibliotecari\n\n";
+                    cout << "\t1-Cautati un bibliotecar dupa ID\n";
+                    cout << "\t2-Cautati un bibliotecar dupa numele complet\n";
+                    cout << "\t3-Cautati bibliotecarii cu o anumita varsta\n"; //functionalitate
+                    cout << "\t4-Cautati bibliotecarii angajati dupa o anumita data\n"; //functionalitate
+                    cout << "\t5-Inapoi la meniul principal\n";
+                    int command3;
+                    cin >> command3;
+                    switch (command3){
+                        case 1:{
+                            cout << "Introduceti ID-ul: ";
+                            int id, k = 0;
+                            cin >> id;
+                            for(int i = 0; i<cb; i++)
+                                if(int(vectorBibliotecari[i]) == id)
+                                {
+                                    cout << vectorBibliotecari[i];
+                                    k = 1;
+                                    break;
+                                }
+                            if (k == 0) cout << "ID inexistent\n";
+                            system("cls");
+                            break;
+                        }
+                        case 2:{
+                            cin.get();
+                            int k = 0;
+                            char nume[20], prenume[20];
+                            cout << "Introduceti numele de familie al bibliotecarului cautat: " << endl;
+                            cin.getline(nume, 20);
+                            cout << "Introduceti prenumele bibliotecarului cautat: " << endl;
+                            cin.getline(prenume, 20);
+                            for(int i = 0; i<cb; i++)
+                                if(strcmp(vectorBibliotecari[i].getNumeBibliotecar(), nume) == 0 && strcmp(vectorBibliotecari[i].getPrenumeBibliotecar(), prenume) == 0)
+                                {
+                                    cout << vectorBibliotecari[i];
+                                    k = 1;
+                                    break;
+                                }
+                            if (k == 0) cout << "Bibliotecarul nu exista!\n";
+                            system("cls");
+                            break;
+                        }
+                        case 3:{
+                            cout << "Introduceti numarul de ani: ";
+                            int ani;
+                            cin >> ani;
+                            int k = 0;
+                            for(int i = 0; i<cb; i++)
+                                if(vectorBibliotecari[i].getVarstaBibliotecar() == ani)
+                                {
+                                    cout << vectorBibliotecari[i] << endl;
+                                    k = 1;
+                                }
+                            if (k == 0) cout << "Nu exista bibliotecari care sa aiba aceasta varsta!\n";
+                            system("cls");
+                            break;
+                        }
+                        case 4:{
+                            int zi, luna, an, k = 0;
+                            cout << "Introduceti data[zz ll aaaa]: ";
+                            cin >> zi >> luna >> an;
+                            for(int i = 0; i<cb; i++)
+                            {
+                                if(vectorBibliotecari[i].getDataAngajarii().an > an)
+                                {
+                                    cout << vectorBibliotecari[i];
+                                    k = 1;
+                                }
+                                else if(vectorBibliotecari[i].getDataAngajarii().an == an)
+                                {
+                                    if(vectorBibliotecari[i].getDataAngajarii().luna > luna)
+                                    {
+                                        cout << vectorBibliotecari[i];
+                                        k = 1;
+                                    }
+                                    else if(vectorBibliotecari[i].getDataAngajarii().luna == luna)
+                                        if(vectorBibliotecari[i].getDataAngajarii().zi >= zi)
+                                        {
+                                            cout << vectorBibliotecari[i];
+                                            k = 1;
+                                        }
+                                }
+                            }
+                            if (k == 0) cout << "Nu exista bibliotecari angajati dupa data introdusa!\n";
+                            system("cls");
+                            break;
+                        }
+                        case 5:{
+                            ok3 = 0;
+                            system("cls");
+                            break;
+                        }
+                        default:{
+                            cout << "Comanda invalida!";
+                        }
+                    }
+                }
+                system("cls");
+                break;
+            }
+            case 8:{
+                int ok4 = 1;
+                while(ok4 != 0)
+                {
+                    cout << "\t\t\tInformatii sali\n\n";
+                    cout << "\t1-Cautati sala dupa numar\n";
+                    cout << "\t2-Cautati numarul de locuri disponibile in fiecare sala\n"; //functionalitate
+                    cout << "\t3-Vedeti utilizatorii dintr-o anumita sala\n"; //functionalitate
+                    cout << "\t4-Inapoi la meniul principal\n";
+                    int command4;
+                    cin >> command4;
+                    switch(command4){
+                        case 1:{
+                            cout << "Introduceti numarul salii: ";
+                            int nr, k = 0;
+                            cin >> nr;
+                            for (int i = 0; i<cs; i++)
+                                if(vectorSali[i].getNrSala() == nr)
+                                {
+                                    cout << vectorSali[i];
+                                    k = 1;
+                                    break;
+                                }
+                            if(k == 0) cout << "Sala nu exista!";
+                            system("cls");
+                            break;
+                        }
+                        case 2:{
+                            for (int i = 0; i<cs; i++)
+                                cout << "Sala numarul " << vectorSali[i].getNrSala() << " are " << int(vectorSali[i]) - vectorSali[i].getNrLocuriOcupate() << " locuri disponibile.\n";
+                            system("cls");
+                            break;
+                        }
+                        case 3:{
+                            for(int i = 0; i<cs; i++)
+                                for (int j = 0; j<vectorSali[i].getNrLocuriOcupate(); j++)
+                                    for (int a = 0; a < cu; a++)
+                                        if(int(vectorUtilizatori[a]) == vectorSali[i][j])
+                                        {
+                                            cout << vectorUtilizatori[a];
+                                            break;
+                                        }
+                            system("cls");
+                            break;
+                        }
+                        case 4:{
+                            ok4 = 0;
+                            system("cls");
+                            break;
+                        }
+                        default:{
+                            cout << "Comanda invalida!";
+                        }
+                    }
+                }
+                system("cls");
+                break;
+            }
+            case 9:{
+                int ok5 = 1;
+                while (ok5 != 0)
+                {
+                    cout << "\t\t\tMeniu editare carti\n\n";
+                    cout << "\t1-Imprumutati cartea unui cititor anume\n";
+                    cout << "\t2-Inapoi la meniul principal\n";
+                    int command5;
+                    cin >> command5;
+                    switch (command5){
+                        case 1:{
+                            cout << "Introduceti ID cititor: ";
+                            int id;
+                            cin >> id;
+                            for (int i=0; i<cu; i++)
+                                if(vectorUtilizatori[i].getIdUtilizator() == id)
+                                {
+                                    int id1 = -1;
+                                    cout << "Introduceti ID carte: ";
+                                    for (int j=0; j<cc; j++)
+                                    {
+                                        if(vectorCarti[j].getIdCarte() == id1)
+                                        {
+                                            vectorUtilizatori[i] = vectorUtilizatori[i] + vectorCarti[j].getIdCarte();
+                                        }
+                                    }
+                                }
+                            system("cls");
+                            break;
+                        }
+                        case 2:{
+                            ok5 = 0;
+                            system("cls");
+                            break;
+                        }
+                    }
+                }
+                system("cls");
+                break;
+            }
+            case 10:{
+                int ok6 = 1;
+                while (ok6 != 0)
+                {
+                    cout << "\t\t\tMeniu editare utilizatori\n\n";
+                    cout << "\t1-Returnati cartea\n";
+                    cout << "\t2-Inapoi la meniul principal\n";
+                    int command6;
+                    cin >> command6;
+                    switch(command6){
+                        case 1:{
+                            cout << "Introduceti ID utilizator: ";
+                            int id;
+                            cin >> id;
+                            for (int i = 0; i<cu; i++)
+                                if (vectorUtilizatori[i].getIdUtilizator() == id)
+                                {
+                                    cout << "Introduceti ID carte: ";
+                                    int id1;
+                                    cin >> id1;
+                                    vectorUtilizatori[i] = vectorUtilizatori[i] - id1;
+                                }
+                            system("cls");
+                            break;
+                        }
+                        case 2:{
+                            ok6 = 0;
+                            system("cls");
+                            break;
+                        }
+                        default:{
+                            cout << "Optiune inexistenta\n";
+                        }
+                    }
+                }
+                system("cls");
+                break;
+            }
+            case 11:{
+                int ok7 = 1;
+                while(ok7 != 0)
+                {
+                    cout << "\t\t\tMeniu editare bibliotecari\n\n";
+                    cout << "\t1-Modificati salariul unui bibliotecar\n";
+                    cout << "\t2-Inapoi la meniul principal\n";
+                    int command7;
+                    cin >> command7;
+                    switch(command7){
+                        case 1:{
+                            cout << "Introduceti ID bibliotecar";
+                            int id;
+                            cin >> id;
+                            for (int i = 0; i<cb; i++)
+                            {
+                                if(int(vectorBibliotecari[i]) == id)
+                                {
+                                    cout << "Introduceti noul venit lunar: ";
+                                    float venit;
+                                    cin >> venit;
+                                    vectorBibliotecari[i].setVenitLunar(venit);
+                                }
+                            }
+                            system("cls");
+                            break;
+                        }
+                        case 2:{
+                            ok7 = 0;
+                            system("cls");
+                            break;
+                        }
+                    }
+                }
+                system("cls");
+                break;
+            }
+            case 12:{
+                int ok8 = 1;
+                while (ok8 != 0)
+                {
+                    cout << "\t\t\tMeniu editare Sali\n\n";
+                    cout << "\t1-Introduceti un cititor intr-o anumita sala\n";
+                    cout << "\t2-Scoateti un cititor dintr-o anumita sala\n";
+                    cout << "\t3-Inapoi la meniul principal\n";
+                    int command8;
+                    cin >> command8;
+                    switch(command8){
+                        case 1:{
+                            cout << "Introduceti ID cititor: ";
+                            int id, nr;
+                            cin >> id;
+                            cout << "\nIntroduceti numarul salii: ";
+                            cin >> nr;
+                            for (int i = 0; i<cs; i++)
+                                if(vectorSali[i].getNrSala() == nr)
+                                {
+                                    vectorSali[i] = vectorSali[i] + id;
+                                    break;
+                                }
+                            system("cls");
+                            break;
+                        }
+                        case 2:{
+                            cout << "Introduceti ID cititor: ";
+                            int id, nr;
+                            cin >> id;
+                            cout << "\nIntroduceti numarul salii: ";
+                            cin >> nr;
+                            for (int i = 0; i<cs; i++)
+                                if(vectorSali[i].getNrSala() == nr)
+                                {
+                                    vectorSali[i] = vectorSali[i] - id;
+                                    break;
+                                }
+                            system("cls");
+                            break;
+                        }
+                        case 3:{
+                            ok8 = 0;
+                            system("cls");
+                            break;
+                        }
+                    }
+                }
+                system("cls");
+                break;
+            }
+            case 13:{
+                cout << "Introduceti ID-ul cartii: ";
+                int id, k = 0;
+                cin >> id;
+                for (int i =0; i<cc; i++)
+                    if (vectorCarti[i].getIdCarte() == id)
+                    {
+                        swap(vectorCarti[i], vectorCarti[cc]);
+                        k = 1;
+                        break;
+                    }
+                if(k == 0) cout << "Cartea nu exista!\n";
+                else cc--; //
+                system("cls");
+                break;
+            }
+            case 14:{
+                cout << "Introduceti ID-ul Utilizatorului: ";
+                int id, k = 0;
+                cin >> id;
+                for (int i =0; i<cu; i++)
+                    if (vectorUtilizatori[i].getIdUtilizator() == id)
+                    {
+                        swap(vectorUtilizatori[i], vectorUtilizatori[cu]);
+                        k = 1;
+                        break;
+                    }
+                if(k == 0) cout << "Utilizatorul nu exista!\n";
+                else cu--; //
+                system("cls");
+                break;
+            }
+            case 15:{
+                cout << "Introduceti ID-ul bibliotecarului: ";
+                int id, k = 0;
+                cin >> id;
+                for (int i =0; i<cb; i++)
+                    if (int(vectorBibliotecari[i]) == id)
+                    {
+                        swap(vectorBibliotecari[i], vectorBibliotecari[cb]);
+                        k = 1;
+                        break;
+                    }
+                if(k == 0) cout << "Bibliotecarul nu exista!\n";
+                else cb--; //
+                system("cls");
+                break;
+            }
+            case 16:{
+                cout << "Introduceti numarul salii: ";
+                int id, k = 0;
+                cin >> id;
+                for (int i =0; i<cs; i++)
+                    if (vectorSali[i].getNrSala() == id)
+                    {
+                        swap(vectorSali[i], vectorSali[cs]);
+                        k = 1;
+                        break;
+                    }
+                if(k == 0) cout << "Sala nu exista!\n";
+                else cs--; //
+                system("cls");
+                break;
+            }
+            case 17:{
+                ok = 0;
+                break;
+            }
+            default:{
+                cout << "Comanda invalida!";
+                break;
+            }
+        }
+    }
+    return 0;
 }
