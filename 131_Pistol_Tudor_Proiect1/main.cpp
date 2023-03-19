@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string.h>
-
 using namespace std;
+
 class Carte{
 private:
     const int idCarte;
@@ -23,8 +23,6 @@ public:
     Carte &operator + (int);
     friend Carte operator + (int idCititor, Carte &c);
     Carte &operator - (int);
-    Carte &operator ++ ();
-    Carte operator ++ (int);
     Carte &operator -- ();
     Carte operator -- (int);
     bool operator == (const Carte &c);
@@ -113,6 +111,96 @@ Carte::~Carte()
         delete [] this->autor;
         this->autor = NULL;
     }
+}
+
+Carte& Carte::operator + (int idCititor)
+{
+    if(this->status == 0)
+        throw runtime_error("Cartea este deja imprumutata.");
+    else
+    {
+        this->status = false;
+        this->idCititor = idCititor;
+        return *this;
+    }
+}
+
+Carte operator + (int idCititor, Carte &c)
+{
+    if(c.status == 0)
+        throw runtime_error("Cartea este deja imprumutata.");
+    else
+    {
+        c.status = false;
+        c.idCititor = idCititor;
+        return c;
+    }
+}
+
+Carte& Carte::operator - (int a)
+{
+    this->anAparitie -= a;
+    return *this;
+}
+
+Carte& Carte::operator -- ()
+{
+    if(this->status == 1)
+        throw runtime_error("Cartea nu a fost imprumutata inca niciunui utilizator.");
+    else
+    {
+        this->status = true;
+        this->idCititor = -1;
+        return *this;
+    }
+}
+
+Carte Carte::operator -- (int)
+{
+    Carte aux(*this);
+    if (this->status == 1)
+        throw runtime_error("Cartea nu a fost imprumutata inca niciunui utilizator.");
+    else
+    {
+        this->status = true;
+        this->idCititor = -1;
+        return aux;
+    }
+}
+
+bool Carte::operator == (const Carte &c)
+{
+    if (this->anAparitie == c.anAparitie)
+        return true;
+    else return false;
+}
+
+bool Carte::operator < (const Carte &c)
+{
+    if (this->anAparitie < c.anAparitie)
+        return true;
+    else return false;
+}
+
+bool Carte::operator <= (const Carte &c)
+{
+    if (this->anAparitie <= c.anAparitie)
+        return true;
+    else return false;
+}
+
+bool Carte::operator > (const Carte &c)
+{
+    if (this->anAparitie > c.anAparitie)
+        return true;
+    else return false;
+}
+
+bool Carte::operator >= (const Carte &c)
+{
+    if (this->anAparitie >= c.anAparitie)
+        return true;
+    else return false;
 }
 
 Carte &Carte::operator = (const Carte &Obj)
@@ -854,7 +942,7 @@ private:
     static int contorSala;
     int nrLocuriSala;
     int nrLocuriOcupate;
-    int locuriOcupate[50];
+    int *idCititori;
     struct dimensiune{
         double lungime;
         double latime;
@@ -864,15 +952,27 @@ public:
     const void setDimensiuneSala(dimensiune dimensiuneSala);
 //constructori
     Sala();
-    Sala(int nrLocuriSala, int nrLocuriOcupate, int locuriOcupate[50], dimensiune dimensiuneSala);
+    Sala(int nrLocuriSala, int nrLocuriOcupate, int *idCititori, dimensiune dimensiuneSala);
     Sala(int nrLocuriSala, dimensiune dimensiuneSala);
     Sala(int nrLocuriSala, int nrLocuriOcupate);
     Sala(const Sala &obj); //copy-constructor
-    ~Sala() {}
+    ~Sala();
 //operatori
     Sala &operator =(const Sala &s);
-//    Sala &operator --(); //vezi locuriOcupate
-//    Sala &operator ++(int loc) {this->nrLocuriOcupate += 1; this->locuriOcupate[this->nrLocuriOcupate] = loc; return *this;}
+    Sala &operator + (int);
+    friend Sala operator + (int idCititor, Sala &s);
+    Sala &operator - (int);
+    Sala &operator ++ ();
+    Sala operator ++ (int);
+    Sala &operator -- ();
+    Sala operator -- (int);
+    int operator [] (int);
+    operator int() {return this->nrLocuriOcupate;}
+    bool operator == (Sala &s);
+    bool operator > (Sala &s);
+    bool operator >= (Sala &s);
+    bool operator <= (Sala &s);
+    bool operator < (Sala &s);
     friend istream &operator >> (istream &in, Sala &s);
     friend ostream &operator << (ostream &out, const Sala &s);
 };
@@ -889,18 +989,18 @@ Sala::Sala():nrSala(++contorSala)
 {
     nrLocuriSala = 0;
     nrLocuriOcupate = 0;
-    locuriOcupate[0] = NULL;
+    idCititori = NULL;
     dimensiuneSala.lungime = 0;
     dimensiuneSala.latime = 0;
 }
 
-Sala::Sala(int nrLocuriSala, int nrLocuriOcupate, int *locuriOcupate, dimensiune dimensiuneSala):nrSala(++contorSala)
+Sala::Sala(int nrLocuriSala, int nrLocuriOcupate, int *idCititori, dimensiune dimensiuneSala):nrSala(++contorSala)
 {
     this->nrLocuriSala = nrLocuriSala;
     this->nrLocuriOcupate = nrLocuriOcupate;
-//    this->locuriOcupate = new int[nrLocuriOcupate];
+    this->idCititori = new int[this->nrLocuriOcupate];
     for(int i = 0; i<nrLocuriOcupate; i++)
-        this->locuriOcupate[i] = locuriOcupate[i];
+        this->idCititori[i] = idCititori[i];
     this->dimensiuneSala.lungime = dimensiuneSala.lungime;
     this->dimensiuneSala.latime = dimensiuneSala.latime;
 }
@@ -909,7 +1009,7 @@ Sala::Sala(int nrLocuriSala, dimensiune dimensiuneSala):nrSala(++contorSala)
 {
     this->nrLocuriSala = nrLocuriSala;
     nrLocuriOcupate = 0;
-    locuriOcupate[0] = NULL;
+    idCititori = NULL;
     this->dimensiuneSala.lungime = dimensiuneSala.lungime;
     this->dimensiuneSala.latime = dimensiuneSala.lungime;
 }
@@ -918,7 +1018,7 @@ Sala::Sala(int nrLocuriSala, int nrLocuriOcupate):nrSala(++contorSala)
 {
     this->nrLocuriSala = nrLocuriSala;
     this->nrLocuriOcupate = nrLocuriOcupate;
-    locuriOcupate[0] = NULL;
+    idCititori = NULL;
     dimensiuneSala.lungime = 0;
     dimensiuneSala.latime = 0;
 }
@@ -927,11 +1027,20 @@ Sala::Sala(const Sala &obj):nrSala(++contorSala)
 {
     this->nrLocuriSala = obj.nrLocuriSala;
     this->nrLocuriOcupate = obj.nrLocuriOcupate;
-//    locuriOcupate = new int[obj.nrLocuriOcupate];
+    this->idCititori = new int[obj.nrLocuriOcupate];
     for(int i = 0; i<obj.nrLocuriOcupate; i++)
-        this->locuriOcupate[i] = obj.locuriOcupate[i];
+        this->idCititori[i] = obj.idCititori[i];
     this->dimensiuneSala.lungime = obj.dimensiuneSala.lungime;
     this->dimensiuneSala.latime = obj.dimensiuneSala.latime;
+}
+
+Sala::~Sala()
+{
+    if(idCititori != NULL)
+    {
+        delete [] idCititori;
+        idCititori = NULL;
+    }
 }
 
 Sala &Sala::operator =(const Sala &s)
@@ -939,20 +1048,151 @@ Sala &Sala::operator =(const Sala &s)
     
     this->nrLocuriSala = s.nrLocuriSala;
     this->nrLocuriOcupate = s.nrLocuriOcupate;
-//    locuriOcupate = new int[s.nrLocuriOcupate];
+    this->idCititori = new int[s.nrLocuriOcupate];
     for(int i = 0; i<s.nrLocuriOcupate; i++)
-        this->locuriOcupate[i] = s.locuriOcupate[i];
+        this->idCititori[i] = s.idCititori[i];
     this->dimensiuneSala.lungime = s.dimensiuneSala.lungime;
     this->dimensiuneSala.latime = s.dimensiuneSala.latime;
     return *this;
 }
 
-//Sala &Sala::operator --()
-//{
-//    delete &this->locuriOcupate[this->nrLocuriOcupate];
-//    this->nrLocuriOcupate -= 1;
-//    return *this;
-//}
+Sala& Sala::operator + (int idCititor)
+{
+    if(this->nrLocuriOcupate + 1 > this->nrLocuriSala)
+        throw runtime_error("Sala este deja folosita la capacitate maxima.");
+    else
+    {
+        this->nrLocuriOcupate++;
+        int *aux;
+        aux = new int[this->nrLocuriOcupate];
+        for(int i = 0; i<this->nrLocuriOcupate-1; i++)
+            aux[i] = this->idCititori[i];
+        aux[this->nrLocuriOcupate-1] = idCititor;
+        delete [] this->idCititori;
+        this->idCititori = new int[this->nrLocuriOcupate];
+        for(int i = 0; i<this->nrLocuriOcupate; i++)
+            this->idCititori[i] = aux[i];
+        delete [] aux;
+        aux = NULL;
+        return *this;
+    }
+}
+
+Sala operator + (int idCititor, Sala &s)
+{
+    if(s.nrLocuriOcupate + 1 > s.nrLocuriSala)
+        throw runtime_error("Sala este deja folosita la capacitate maxima.");
+    else
+    {
+        s.nrLocuriOcupate++;
+        int *aux;
+        aux = new int[s.nrLocuriOcupate];
+        for(int i = 0; i<s.nrLocuriOcupate-1; i++)
+            aux[i] = s.idCititori[i];
+        aux[s.nrLocuriOcupate-1] = idCititor;
+        delete [] s.idCititori;
+        s.idCititori = new int[s.nrLocuriOcupate];
+        for(int i = 0; i<s.nrLocuriOcupate; i++)
+            s.idCititori[i] = aux[i];
+        delete [] aux;
+        aux = NULL;
+        return s;
+    }
+    
+}
+
+Sala& Sala::operator - (int idCititor)
+{
+    if(this->nrLocuriOcupate == 0)
+        throw runtime_error("Sala nu are niciun cititor.");
+    else
+    {
+        for (int i = 0; i<this->nrLocuriOcupate; i++)
+            if(idCititor == this->idCititori[i])
+            {
+                swap(this->idCititori[i], this->idCititori[this->nrLocuriOcupate-1]);
+                break;
+            }
+        this->nrLocuriOcupate--;
+        int *aux;
+        aux = new int[this->nrLocuriOcupate];
+        for(int i = 0; i<this->nrLocuriOcupate; i++)
+            aux[i] = this->idCititori[i];
+        delete [] this->idCititori;
+        this->idCititori = new int[this->nrLocuriOcupate];
+        for(int i = 0; i<this->nrLocuriOcupate; i++)
+            this->idCititori[i] = aux[i];
+        delete [] aux;
+        aux = NULL;
+        return *this;
+    }
+}
+
+Sala& Sala::operator ++ ()
+{
+    this->nrLocuriSala++;
+    return *this;
+}
+
+Sala Sala::operator ++ (int)
+{
+    Sala aux(*this);
+    this->nrLocuriSala++;
+    return aux;
+}
+
+Sala& Sala::operator -- ()
+{
+    this->nrLocuriSala--;
+    return *this;
+}
+
+Sala Sala::operator -- (int)
+{
+    Sala aux(*this);
+    this->nrLocuriSala--;
+    return aux;
+}
+
+int Sala::operator [] (int index)
+{
+    return this->idCititori[index-1];
+}
+
+bool Sala::operator == (Sala &s)
+{
+    if(this->nrLocuriOcupate == s.nrLocuriOcupate)
+        return true;
+    else return false;
+}
+
+bool Sala::operator < (Sala &s)
+{
+    if(this->nrLocuriOcupate < s.nrLocuriOcupate)
+        return true;
+    else return false;
+}
+
+bool Sala::operator <= (Sala &s)
+{
+    if(this->nrLocuriOcupate <= s.nrLocuriOcupate)
+        return true;
+    else return false;
+}
+
+bool Sala::operator > (Sala &s)
+{
+    if(this->nrLocuriOcupate > s.nrLocuriOcupate)
+        return true;
+    else return false;
+}
+
+bool Sala::operator >= (Sala &s)
+{
+    if(this->nrLocuriOcupate >= s.nrLocuriOcupate)
+        return true;
+    else return false;
+}
 
 istream &operator >> (istream &in, Sala &s)
 {
@@ -962,15 +1202,15 @@ istream &operator >> (istream &in, Sala &s)
     in >> s.nrLocuriOcupate;
     if (s.nrLocuriOcupate != 0)
     {
-        cout << "Care locuri sunt ocupate? ";
-//        if (s.locuriOcupate != NULL)
-//        {
-//            delete [] s.locuriOcupate;
-//            s.locuriOcupate = NULL;
-//        }
-//        s.locuriOcupate = new int[s.nrLocuriOcupate];
+        cout << "Care sunt ID-urile cititorilor din sala? ";
+        if (s.idCititori != NULL)
+        {
+            delete [] s.idCititori;
+            s.idCititori = NULL;
+        }
+        s.idCititori = new int[s.nrLocuriOcupate];
         for (int i=0; i<s.nrLocuriOcupate; i++)
-            in >> s.locuriOcupate[i];
+            in >> s.idCititori[i];
     }
     cout << "Care este dimensiunea salii[lungime latime]? ";
     in >> s.dimensiuneSala.lungime >> s.dimensiuneSala.latime;
@@ -984,23 +1224,26 @@ ostream &operator << (ostream &out, const Sala &s)
     out << "Numarul de locuri libere: " << s.nrLocuriSala - s.nrLocuriOcupate << endl;
     if(s.nrLocuriOcupate != 0)
     {
-        out << "Locurile ocupate sunt: ";
+        out << "Locurile sunt ocupate de cititorii cu ID-ul: ";
         for (int i = 0; i<s.nrLocuriOcupate-1; i++)
-            out << s.locuriOcupate[i] << ", ";
-        out << s.locuriOcupate[s.nrLocuriOcupate-1] << "." << endl;
+            out << s.idCititori[i] << ", ";
+        out << s.idCititori[s.nrLocuriOcupate-1] << "." << endl;
     }
     return out;
 }
 
 int main()
 {
-    Carte b1, b2, b3;
-    cin>> b1;
-    cout << b1;
+//    Utilizator b1, b2, b3;
+//    cin >> b1;
+//    cout << b1;
     //cout << 500.6 +b1 ;
     //b1-10.0;
     //cout << b1;
-
+    Sala S;
+    cin >> S;
+    //S = S + 34;
+    cout << S[3];
     
 //    U-2003;
 //    cout << U;
@@ -1015,8 +1258,9 @@ int main()
 //    char c7[] = "Max L. Blecher";
 //    char c8[] = "Liviu Rebreanu";
 //    char c9[] = "Nichita Stanescu";
-//    Carte C0("Moarte la Venetia", c0, 1912, 1);
-//    Carte C1("Procesul", c1, 1925, 1);
+//    Carte C0("Moarte la Venetia", c0, 1912, 1, 0);
+//    Carte C1("Procesul", c1, 1925, 1, 0);
+//    C1 =C1 - 34;
 //    Carte C2("Ciuma", c2, 1947, 1);
 //    Carte C3("Cartea nelinistirii", c3, 1982, 1);
 //    Carte C4("Un veac de singuratate", c4, 1967, 1);
