@@ -53,4 +53,4 @@ public:
 };
 
 
-#endif /* sala_h */
+#endif

@@ -1,10 +1,3 @@
-//
-//  bibliotecar.h
-//  131_Pistol_Tudor_Proiect1
-//
-//  Created by Tudor Pistol on 20.04.2023.
-//
-
 #ifndef bibliotecar_h
 #define bibliotecar_h
 using namespace std;
@@ -59,4 +52,4 @@ public:
 };
 
 
-#endif /* bibliotecar_h */
+#endif

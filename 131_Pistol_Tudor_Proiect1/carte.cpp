@@ -2,6 +2,7 @@
 #include "carte.h"
 using namespace std;
 
+
 int Carte::contorIdCarte = 1000;
 
 Carte::Carte():idCarte(contorIdCarte++)

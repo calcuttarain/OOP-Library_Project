@@ -1,10 +1,3 @@
-//
-//  utilizator.cpp
-//  131_Pistol_Tudor_Proiect1
-//
-//  Created by Tudor Pistol on 20.04.2023.
-//
-
 #include <iostream>
 #include "utilizator.h"
 using namespace std;

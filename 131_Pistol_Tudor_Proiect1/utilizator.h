@@ -1,10 +1,3 @@
-//
-//  utilizator.h
-//  131_Pistol_Tudor_Proiect1
-//
-//  Created by Tudor Pistol on 20.04.2023.
-//
-
 #ifndef utilizator_h
 #define utilizator_h
 using namespace std;
@@ -73,4 +66,4 @@ public:
 
 };
 
-#endif /* utilizator_h */
+#endif

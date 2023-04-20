@@ -51,4 +51,4 @@ public:
     int getIdCititor() {return idCititor;}
 };
 
-#endif /* carte_h */
+#endif 
