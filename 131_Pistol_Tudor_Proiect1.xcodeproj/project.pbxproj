@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F906AEE829F17BD000BFC093 /* utilizator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F906AEE729F17BCF00BFC093 /* utilizator.cpp */; };
 		F9DEE81029B68F5600A65736 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9DEE80F29B68F5600A65736 /* main.cpp */; };
+		F9EFF93229F1708700983BA9 /* carte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9EFF93029F1708700983BA9 /* carte.cpp */; };
+		F9EFF93929F1728500983BA9 /* bibliotecar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9EFF93829F1728500983BA9 /* bibliotecar.cpp */; };
+		F9EFF93B29F172A600983BA9 /* sala.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9EFF93A29F172A600983BA9 /* sala.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,12 +27,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F906AEE629F17A8000BFC093 /* utilizator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utilizator.h; sourceTree = "<group>"; };
+		F906AEE729F17BCF00BFC093 /* utilizator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utilizator.cpp; sourceTree = "<group>"; };
 		F92AB0B229C0B423008FA9A2 /* baza_date_carti */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_carti; sourceTree = "<group>"; };
 		F92AB0B329C0B436008FA9A2 /* baza_date_utilizatori */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_utilizatori; sourceTree = "<group>"; };
 		F92AB0B429C0BADD008FA9A2 /* baza_date_bibliotecari.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_bibliotecari.txt; sourceTree = "<group>"; };
 		F92AB0B529C0BAFC008FA9A2 /* baza_date_sali.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_sali.txt; sourceTree = "<group>"; };
 		F9DEE80C29B68F5600A65736 /* 131_Pistol_Tudor_Proiect1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = 131_Pistol_Tudor_Proiect1; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9DEE80F29B68F5600A65736 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F9EFF92F29F1703D00983BA9 /* carte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = carte.h; sourceTree = "<group>"; };
+		F9EFF93029F1708700983BA9 /* carte.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = carte.cpp; sourceTree = "<group>"; };
+		F9EFF93429F171F200983BA9 /* bibliotecar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bibliotecar.h; sourceTree = "<group>"; };
+		F9EFF93529F1720000983BA9 /* sala.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sala.h; sourceTree = "<group>"; };
+		F9EFF93829F1728500983BA9 /* bibliotecar.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bibliotecar.cpp; sourceTree = "<group>"; };
+		F9EFF93A29F172A600983BA9 /* sala.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sala.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +78,14 @@
 				F92AB0B529C0BAFC008FA9A2 /* baza_date_sali.txt */,
 				F92AB0B229C0B423008FA9A2 /* baza_date_carti */,
 				F92AB0B329C0B436008FA9A2 /* baza_date_utilizatori */,
+				F9EFF92F29F1703D00983BA9 /* carte.h */,
+				F9EFF93029F1708700983BA9 /* carte.cpp */,
+				F9EFF93529F1720000983BA9 /* sala.h */,
+				F9EFF93A29F172A600983BA9 /* sala.cpp */,
+				F9EFF93429F171F200983BA9 /* bibliotecar.h */,
+				F9EFF93829F1728500983BA9 /* bibliotecar.cpp */,
+				F906AEE629F17A8000BFC093 /* utilizator.h */,
+				F906AEE729F17BCF00BFC093 /* utilizator.cpp */,
 			);
 			path = 131_Pistol_Tudor_Proiect1;
 			sourceTree = "<group>";
@@ -127,7 +147,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9EFF93929F1728500983BA9 /* bibliotecar.cpp in Sources */,
 				F9DEE81029B68F5600A65736 /* main.cpp in Sources */,
+				F9EFF93B29F172A600983BA9 /* sala.cpp in Sources */,
+				F9EFF93229F1708700983BA9 /* carte.cpp in Sources */,
+				F906AEE829F17BD000BFC093 /* utilizator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
