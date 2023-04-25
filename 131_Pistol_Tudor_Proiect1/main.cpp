@@ -1,10 +1,13 @@
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
+#include "obiectDeImprumutat.h"
 #include "carte.h"
 #include "utilizator.h"
 #include "bibliotecar.h"
 #include "sala.h"
+#include "film.h"
+#include "revistaCuFilm.h"
 using namespace std;
 
 int main()

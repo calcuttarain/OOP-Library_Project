@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		F906AEE829F17BD000BFC093 /* utilizator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F906AEE729F17BCF00BFC093 /* utilizator.cpp */; };
+		F906AEEB29F4213200BFC093 /* obiectDeImprumutat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F906AEEA29F4213200BFC093 /* obiectDeImprumutat.cpp */; };
+		F906AEEF29F67D4400BFC093 /* film.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F906AEED29F67D4400BFC093 /* film.cpp */; };
+		F906AEF229F7CF4000BFC093 /* revistaCuFilm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F906AEF129F7CF4000BFC093 /* revistaCuFilm.cpp */; };
 		F9DEE81029B68F5600A65736 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9DEE80F29B68F5600A65736 /* main.cpp */; };
 		F9EFF93229F1708700983BA9 /* carte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9EFF93029F1708700983BA9 /* carte.cpp */; };
 		F9EFF93929F1728500983BA9 /* bibliotecar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9EFF93829F1728500983BA9 /* bibliotecar.cpp */; };
@@ -29,6 +32,12 @@
 /* Begin PBXFileReference section */
 		F906AEE629F17A8000BFC093 /* utilizator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utilizator.h; sourceTree = "<group>"; };
 		F906AEE729F17BCF00BFC093 /* utilizator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utilizator.cpp; sourceTree = "<group>"; };
+		F906AEE929F4210100BFC093 /* obiectDeImprumutat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = obiectDeImprumutat.h; sourceTree = "<group>"; };
+		F906AEEA29F4213200BFC093 /* obiectDeImprumutat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = obiectDeImprumutat.cpp; sourceTree = "<group>"; };
+		F906AEEC29F67D3600BFC093 /* film.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = film.h; sourceTree = "<group>"; };
+		F906AEED29F67D4400BFC093 /* film.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = film.cpp; sourceTree = "<group>"; };
+		F906AEF029F7CF1500BFC093 /* revistaCuFilm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = revistaCuFilm.h; sourceTree = "<group>"; };
+		F906AEF129F7CF4000BFC093 /* revistaCuFilm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = revistaCuFilm.cpp; path = 131_Pistol_Tudor_Proiect1/revistaCuFilm.cpp; sourceTree = "<group>"; };
 		F92AB0B229C0B423008FA9A2 /* baza_date_carti */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_carti; sourceTree = "<group>"; };
 		F92AB0B329C0B436008FA9A2 /* baza_date_utilizatori */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_utilizatori; sourceTree = "<group>"; };
 		F92AB0B429C0BADD008FA9A2 /* baza_date_bibliotecari.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = baza_date_bibliotecari.txt; sourceTree = "<group>"; };
@@ -57,6 +66,12 @@
 		F9DEE80329B68F5600A65736 = {
 			isa = PBXGroup;
 			children = (
+				F906AEF129F7CF4000BFC093 /* revistaCuFilm.cpp */,
+				F906AEF029F7CF1500BFC093 /* revistaCuFilm.h */,
+				F906AEED29F67D4400BFC093 /* film.cpp */,
+				F906AEEC29F67D3600BFC093 /* film.h */,
+				F906AEEA29F4213200BFC093 /* obiectDeImprumutat.cpp */,
+				F906AEE929F4210100BFC093 /* obiectDeImprumutat.h */,
 				F9DEE80E29B68F5600A65736 /* 131_Pistol_Tudor_Proiect1 */,
 				F9DEE80D29B68F5600A65736 /* Products */,
 			);
@@ -147,11 +162,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F906AEF229F7CF4000BFC093 /* revistaCuFilm.cpp in Sources */,
+				F906AEEB29F4213200BFC093 /* obiectDeImprumutat.cpp in Sources */,
 				F9EFF93929F1728500983BA9 /* bibliotecar.cpp in Sources */,
 				F9DEE81029B68F5600A65736 /* main.cpp in Sources */,
 				F9EFF93B29F172A600983BA9 /* sala.cpp in Sources */,
 				F9EFF93229F1708700983BA9 /* carte.cpp in Sources */,
 				F906AEE829F17BD000BFC093 /* utilizator.cpp in Sources */,
+				F906AEEF29F67D4400BFC093 /* film.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

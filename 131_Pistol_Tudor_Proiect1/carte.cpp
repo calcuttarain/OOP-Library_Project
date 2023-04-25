@@ -1,58 +1,31 @@
 #include <iostream>
 #include "carte.h"
+#include "obiectDeImprumutat.h"
 using namespace std;
 
 
-int Carte::contorIdCarte = 1000;
-
-Carte::Carte():idCarte(contorIdCarte++)
+Carte::Carte():obiectDeImprumutat()
 {
     titlu = "Nu este cunoscut";
     autor = new char[strlen("Necunoscut")+1];
     strcpy(autor, "Necunoscut");
     anAparitie = NULL;
-    status = false;
-    idCititor = -1;
 }
 
-Carte::Carte(string titlu, char *autor, int anAparitie, bool status, int idCititor):idCarte(contorIdCarte++)
+Carte::Carte(string titlu, char *autor, int anAparitie, bool status, stari stare, int idUtilizatorCurent):obiectDeImprumutat(status, stare, idUtilizatorCurent)
 {
     this->titlu = titlu;
     this->autor = new char[strlen(autor)+1];
     strcpy(this->autor, autor);
     this->anAparitie = anAparitie;
-    this->status = status;
-    this->idCititor = idCititor;
 }
 
-Carte::Carte(string titlu, char *autor):idCarte(contorIdCarte++)
+Carte::Carte(const Carte &ob):obiectDeImprumutat(ob)
 {
-    this->titlu = titlu;
-    this->autor = new char[strlen(autor)+1];
-    strcpy(this->autor, autor);
-    anAparitie = NULL;
-    status = false;
-    idCititor = -1;
-}
-
-Carte::Carte(string titlu, char *autor, int anAparitie):idCarte(contorIdCarte++)
-{
-    this->titlu = titlu;
-    this->autor = new char[strlen(autor)+1];
-    strcpy(this->autor, autor);
-    this->anAparitie = anAparitie;
-    status = false;
-    idCititor = -1;
-}
-
-Carte::Carte(const Carte &Obj):idCarte(contorIdCarte++)
-{
-    this->titlu = Obj.titlu;
-    this->autor = new char[strlen(Obj.autor)+1];
-    strcpy(this->autor, Obj.autor);
-    this->anAparitie = Obj.anAparitie;
-    this->status = Obj.status;
-    this->idCititor = Obj.idCititor;
+    this->titlu = ob.titlu;
+    this->autor = new char[strlen(ob.autor)+1];
+    strcpy(this->autor, ob.autor);
+    this->anAparitie = ob.anAparitie;
 }
 
 Carte::~Carte()
@@ -64,64 +37,9 @@ Carte::~Carte()
     }
 }
 
-Carte& Carte::operator + (int idCititor)
-{
-    if(this->status == 0)
-        throw runtime_error("Cartea este deja imprumutata.");
-    else
-    {
-        this->status = false;
-        this->idCititor = idCititor;
-        return *this;
-    }
-}
-
-Carte operator + (int idCititor, Carte &c)
-{
-    if(c.status == 0)
-        throw runtime_error("Cartea este deja imprumutata.");
-    else
-    {
-        c.status = false;
-        c.idCititor = idCititor;
-        return c;
-    }
-}
-
-Carte& Carte::operator - (int a)
-{
-    this->anAparitie -= a;
-    return *this;
-}
-
-Carte& Carte::operator -- ()
-{
-    if(this->status == 1)
-        throw runtime_error("Cartea nu a fost imprumutata inca niciunui utilizator.");
-    else
-    {
-        this->status = true;
-        this->idCititor = -1;
-        return *this;
-    }
-}
-
-Carte Carte::operator -- (int)
-{
-    Carte aux(*this);
-    if (this->status == 1)
-        throw runtime_error("Cartea nu a fost imprumutata inca niciunui utilizator.");
-    else
-    {
-        this->status = true;
-        this->idCititor = -1;
-        return aux;
-    }
-}
-
 bool Carte::operator == (const Carte &c)
 {
-    if (this->anAparitie == c.anAparitie)
+    if (this->idUtilizatorCurent == c.idUtilizatorCurent)
         return true;
     else return false;
 }
@@ -163,25 +81,29 @@ Carte &Carte::operator = (const Carte &Obj)
             delete [] this->autor;
             this->autor = NULL;
         }
+        obiectDeImprumutat::operator = (Obj);
         this->titlu = Obj.titlu;
         this->autor = new char [strlen(Obj.autor)+1];
         strcpy(this->autor, Obj.autor);
         this->anAparitie = Obj.anAparitie;
-        this->status = Obj.status;
-        this->idCititor = Obj.idCititor;
     }
     return *this;
 }
 
 ostream &operator << (ostream &out, const Carte &c)
 {
-    out << "Codul numeric al cărții: " << c.idCarte << endl;
+    out << "Codul numeric al cărții: " << c.idObiect << endl;
     out << "Titlul cărții: " << c.titlu << endl;
     out<< "Autorul: " << c.autor << endl;
     out << "Anul publicării: " << c.anAparitie << endl;
+    out << "Starea cărții: ";
+    if (c.stare == nou) cout << "nouă" << endl;
+    else if (c.stare == folosit) cout << "folosită" << endl;
+    else cout << "uzată" << endl;;
     if (c.status == 0) out << "Împrumutată de cititorul cu ID-ul ";
     else out << "Disponibilă" << endl;
-    if (c.status == 0) out << c.idCititor << "." <<endl;
+    if (c.status == 0) out << c.idUtilizatorCurent << "." <<endl;
+    cout << "Înregistrată la data de: " << c.dataInregistrare.zi << "." << c.dataInregistrare.luna << "." << c.dataInregistrare.an << endl;
     return out;
 }
 
@@ -206,12 +128,18 @@ istream &operator >> (istream &in, Carte &ca)
     strcpy(ca.autor, aux2);
     cout << "În ce an a fost publicată? ";
     in >> ca.anAparitie;
+    cout << "În ce stare se află cartea?[nou/folosit/uzat]";
+    string aux;
+    in >> aux;
+    if (aux == "nou") ca.stare = nou;
+    else if (aux == "folosit") ca.stare = folosit;
+    else if (aux == "uzat") ca.stare = uzat;
     cout << "Este disponibilă pentru împrumut?[0/1] ";
     in >> ca.status;
     if (ca.status == 0)
     {
         cout << "Introduceti ID-ul cititorului care a imprumutat-o: ";
-        in >> ca.idCititor;
+        in >> ca.idUtilizatorCurent;
         
     }
     in.get(); //fac posibila urmatoarea citire pentru urmatorul obiect(citind enter-ul), in cazul unui vector de obiecte, altfel va considera tasta enter ca titlu pentru urmatoarea carte
@@ -229,3 +157,54 @@ void Carte::setAutor(char *autor)
     strcpy(this->autor, autor);
 }
 
+istream& Carte::inregistrare(istream& in)
+{
+    in.get();
+    cout << "Care este titlul cărții? ";
+    //aloc spatiu random
+    char aux1[100];
+    //citesc sirul de caractere cu functia .getline() ca sa ia in considerare si spatiile
+    in.getline(aux1, 100);
+    this->titlu = aux1;
+    cout << "Cine este autorul? ";
+    char aux2[100];
+    in.getline(aux2, 100); //acelasi lucru ca la string
+    if(this->autor != NULL)
+    {
+        delete [] this->autor;
+        this->autor = NULL;
+    }
+    this->autor = new char [strlen(aux2)+1];
+    strcpy(this->autor, aux2);
+    cout << "În ce an a fost publicată? ";
+    in >> this->anAparitie;
+    cout << "În ce stare se află cartea?[nou/folosit/uzat]";
+    string aux;
+    in >> aux;
+    if (aux == "nou") this->stare = nou;
+    else if (aux == "folosit") this->stare = folosit;
+    else if (aux == "uzat") this->stare = uzat;
+    cout << "Este disponibilă pentru împrumut?[0/1] ";
+    in >> this->status;
+    if (this->status == 0)
+    {
+        cout << "Introduceti ID-ul cititorului care a imprumutat-o: ";
+        in >> this->idUtilizatorCurent;
+        
+    }
+    in.get(); //fac posibila urmatoarea citire pentru urmatorul obiect(citind enter-ul), in cazul unui vector de obiecte, altfel va considera tasta enter ca titlu pentru urmatoarea carte
+    return in;
+}
+
+ostream& Carte::afisare(ostream& out) const
+{
+    out << "Codul numeric al cărții: " << this->idObiect << endl;
+    out << "Titlul cărții: " << this->titlu << endl;
+    out<< "Autorul: " << this->autor << endl;
+    out << "Anul publicării: " << this->anAparitie << endl;
+    if (this->status == 0) out << "Împrumutată de cititorul cu ID-ul ";
+    else out << "Disponibilă" << endl;
+    if (this->status == 0) out << this->idUtilizatorCurent << "." <<endl;
+    cout << "Înregistrată la data de: " << this->dataInregistrare.zi << "." << this->dataInregistrare.luna << "." << this->dataInregistrare.an << endl;
+    return out;
+}
